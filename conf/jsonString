@@ -1,0 +1,46 @@
+{
+      "couchdb": {
+        "request_time": {
+          "current": 0,
+         "max": 0,
+         "mean": 0.0,
+         "description": "length of a request inside CouchDB without Mochiweb",
+         "stddev": 0.0,
+         "min": 0,
+         "count": 2
+       }
+     },
+     "httpd_request_methods": {
+       "GET": {
+         "current": 2,
+         "max": 1,
+         "mean": 0.00096946194861852,
+         "description": "number of HTTP GET requests",
+         "stddev": 0.0311210875797858,
+         "min": 0,
+         "count": 2063
+       }
+     },
+     "httpd": {
+       "requests": {
+         "current": 2,
+         "max": 1,
+         "mean": 0.00096946194861852,
+         "description": "number of HTTP requests",
+         "stddev": 0.0311210875797858,
+         "min": 0,
+         "count": 2063
+       }
+     },
+     "httpd_status_codes": {
+       "200": {
+         "current": 2,
+         "max": 1,
+         "mean": 0.00096946194861852,
+         "description": "number of HTTP 200 OK responses",
+         "stddev": 0.0311210875797858,
+         "min": 0,
+         "count": 2063
+       }
+     }
+  }
