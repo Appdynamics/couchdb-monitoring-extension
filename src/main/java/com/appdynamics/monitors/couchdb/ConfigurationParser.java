@@ -43,10 +43,10 @@ public class ConfigurationParser {
                 Node host = hostNodes.item(i);
                 NamedNodeMap attributes = host.getAttributes();
                 HostConfig newHost = new HostConfig();
-                newHost.hostId = attributes.getNamedItem(HOST_ID_ATTRIBUTE).toString();
-                newHost.port = attributes.getNamedItem(PORT_ATTRIBUTE).toString();
-                newHost.username = attributes.getNamedItem(USERNAME_ATTRIBUTE).toString();
-                newHost.password = attributes.getNamedItem(PASSWORD_ATTRIBUTE).toString();
+                newHost.hostId = attributes.getNamedItem(HOST_ID_ATTRIBUTE).getNodeValue();
+                newHost.port = attributes.getNamedItem(PORT_ATTRIBUTE).getNodeValue();
+                newHost.username = attributes.getNamedItem(USERNAME_ATTRIBUTE).getNodeValue();
+                newHost.password = attributes.getNamedItem(PASSWORD_ATTRIBUTE).getNodeValue();
                 hostConfigs.add(newHost);
             }
         } catch(ParserConfigurationException e) {

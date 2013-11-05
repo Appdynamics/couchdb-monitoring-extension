@@ -1,8 +1,6 @@
 package com.appdynamics.monitors.couchdb;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -12,20 +10,22 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-public class CouchDBRESTWrapper {
+public class CouchDBWrapper {
 
-    private static final Logger logger = Logger.getLogger(CouchDBRESTWrapper.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(CouchDBWrapper.class.getSimpleName());
+    private static final String SUM_VALUE = "sum";
     private HostConfig hostConfig;
 
-    public CouchDBRESTWrapper(HostConfig hostConfig) {
+    public CouchDBWrapper(HostConfig hostConfig) {
         this.hostConfig = hostConfig;
     }
 
     public HashMap gatherMetrics() throws Exception{
         HttpURLConnection connection = null;
         InputStream is = null;
-        HashMap metrics = new HashMap();
         String cacheServerUrl = constructURL();
         try {
             URL u = new URL(cacheServerUrl);
@@ -41,12 +41,8 @@ public class CouchDBRESTWrapper {
             }
 
             JsonObject jsonObject = new JsonParser().parse(jsonString.toString()).getAsJsonObject();
-
-            System.out.println("done");
-
-
-            //metrics = convertResponseToMap(is);
-            return metrics;
+            HashMap hostMetrics = constructMetricsMap(jsonObject);
+            return hostMetrics;
         } catch(MalformedURLException e) {
             logger.error("Invalid URL used to connect to CoucheDB: " + cacheServerUrl);
             throw e;
@@ -64,6 +60,36 @@ public class CouchDBRESTWrapper {
                 throw e;
             }
         }
+    }
+
+
+    private HashMap constructMetricsMap(JsonObject metricsObject) throws Exception {
+        // 1st level: Metric Category
+        // 2nd level: Metric Name
+        HashMap<String, HashMap<String, Number>> hostMetrics = new HashMap<String, HashMap<String, Number>>();
+
+        Iterator metricCategoryIterator = metricsObject.entrySet().iterator();
+
+        while (metricCategoryIterator.hasNext()) {
+            Map.Entry<String, JsonObject> metricCategoryEntry = (Map.Entry<String, JsonObject>)metricCategoryIterator.next();
+            String metricCategory = metricCategoryEntry.getKey();
+            JsonObject metricCategoryObject = metricCategoryEntry.getValue();
+            Iterator metricNameIterator = metricCategoryObject.entrySet().iterator();
+
+            HashMap<String, Number> metricsNameMap = new HashMap<String,Number>();
+            while (metricNameIterator.hasNext()) {
+                Map.Entry<String, JsonObject> metricNameEntry = (Map.Entry<String, JsonObject>)metricNameIterator.next();
+                String metricName = metricNameEntry.getKey();
+                JsonObject metricValuesObject = metricNameEntry.getValue();
+
+                if (!metricValuesObject.get(SUM_VALUE).isJsonNull()) {
+                    Number metricValue = metricValuesObject.get(SUM_VALUE).getAsNumber();
+                    metricsNameMap.put(metricName, metricValue);
+                }
+            }
+            hostMetrics.put(metricCategory, metricsNameMap);
+        }
+        return hostMetrics;
     }
 
     /**

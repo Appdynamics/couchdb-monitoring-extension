@@ -1,29 +1,21 @@
 package com.appdynamics.monitors.couchdb;
 
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
+import com.singularity.ee.agent.systemagent.api.MetricWriter;
 import com.singularity.ee.agent.systemagent.api.TaskExecutionContext;
 import com.singularity.ee.agent.systemagent.api.TaskOutput;
 import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 public class CoucheDBMonitor extends AManagedMonitor{
 
-    //TODO
-        // Connect to database
-        // Retrieve metrics
-        // Print metrics
-
     private static final String METRIC_PREFIX = "Custom Metrics|CoucheDB|HostId|";
-    private static final String HOST_PARAM = "host";
-    private static final String PORT_PARAM = "port";
-    private static final String USERNAME_PARAM = "username";
-    private static final String PASSWORD_PARAM = "password";
     private HashSet<HostConfig> hostConfigs = new HashSet<HostConfig>();
     private boolean isInitialized = false;
 
@@ -32,20 +24,18 @@ public class CoucheDBMonitor extends AManagedMonitor{
     public static void main(String[] args) throws Exception{
         logger.setLevel(Level.DEBUG);
         CoucheDBMonitor coucheDBMonitor = new CoucheDBMonitor();
-        ConfigurationParser configurationParser = new ConfigurationParser("conf/HostConfig.xml");
-        HashSet set = configurationParser.parseHostConfig();
-        //Map<String,String> taskArguments = new HashMap<String, String>();
-        //coucheDBMonitor.execute(taskArguments, null);
+        Map<String,String> taskArguments = new HashMap<String, String>();
+        taskArguments.put("hosts-config-path", "conf/HostsConfig.xml");
+        coucheDBMonitor.execute(taskArguments, null);
     }
     private void initialize(Map<String,String> taskArguments) throws Exception {
         if (!isInitialized) {
+            logger.info("Reading hosts' configuration...");
             ConfigurationParser configurationParser = new ConfigurationParser(taskArguments.get("hosts-config-path"));
             hostConfigs = configurationParser.parseHostConfig();
             isInitialized = true;
         }
     }
-
-
 
     /**
      * Main execution method that uploads the metrics to the AppDynamics Controller
@@ -57,20 +47,60 @@ public class CoucheDBMonitor extends AManagedMonitor{
             initialize(taskArguments);
 
             for (HostConfig hostConfig : hostConfigs) {
-                CouchDBRESTWrapper couchDBRESTWrapper = new CouchDBRESTWrapper(hostConfig);
-                HashMap metrics = couchDBRESTWrapper.gatherMetrics();
+                CouchDBWrapper couchDBWrapper = new CouchDBWrapper(hostConfig);
+                HashMap metrics = couchDBWrapper.gatherMetrics();
+                printMetrics(hostConfig.hostId, metrics);
+
                 logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
                 //printMetrics(metrics);
                 logger.info("Printed metrics successfully");
             }
             return new TaskOutput("Task successful...");
 
-        } catch(MalformedURLException e) {
-            logger.error("Check the url for the host", e);
         } catch (Exception e) {
             logger.error("Exception: ", e);
         }
         return new TaskOutput("Task failed with errors");
     }
+    /**
+     * Writes the cache metrics to the controller
+     * @param hostId            Name of the CoucheDB host
+     * @param 	metricsMap		HashMap containing all the cache metrics
+     */
+    private void printMetrics(String hostId, HashMap metricsMap) throws Exception{
+        HashMap<String, HashMap<String, Number>> metrics = (HashMap<String,HashMap<String,Number>>) metricsMap;
+        Iterator outerIterator = metrics.keySet().iterator();
 
+        while (outerIterator.hasNext()) {
+            String metricCategory = outerIterator.next().toString();
+            HashMap<String, Number> metricCategoryStats = metrics.get(metricCategory);
+            Iterator innerIterator = metricCategoryStats.keySet().iterator();
+            while (innerIterator.hasNext()) {
+                String metricName = innerIterator.next().toString();
+                Number metric = metricCategoryStats.get(metricName);
+                printMetric(hostId + "|" + metricCategory + "|" + metricName, metric,
+                        MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION,
+                        MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
+                        MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+            }
+        }
+    }
+
+    /**
+     * Returns the metric to the AppDynamics Controller.
+     * @param 	metricName		Name of the Metric
+     * @param 	metricValue		Value of the Metric
+     * @param 	aggregation		Average OR Observation OR Sum
+     * @param 	timeRollup		Average OR Current OR Sum
+     * @param 	cluster			Collective OR Individual
+     */
+    private void printMetric(String metricName, Number metricValue, String aggregation, String timeRollup, String cluster) throws Exception
+    {
+        MetricWriter metricWriter = super.getMetricWriter(METRIC_PREFIX + metricName,
+                aggregation,
+                timeRollup,
+                cluster
+        );
+        metricWriter.printMetric(String.valueOf((long) metricValue.doubleValue()));
+    }
 }
