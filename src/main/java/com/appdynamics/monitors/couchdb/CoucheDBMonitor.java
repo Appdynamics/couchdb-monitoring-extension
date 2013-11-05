@@ -24,6 +24,7 @@ public class CoucheDBMonitor extends AManagedMonitor{
     private static final String PORT_PARAM = "port";
     private static final String USERNAME_PARAM = "username";
     private static final String PASSWORD_PARAM = "password";
+    private HashSet<HostConfig> hostConfigs = new HashSet<HostConfig>();
     private boolean isInitialized = false;
 
     private static final Logger logger = Logger.getLogger(CoucheDBMonitor.class.getSimpleName());
@@ -34,12 +35,14 @@ public class CoucheDBMonitor extends AManagedMonitor{
         ConfigurationParser configurationParser = new ConfigurationParser("conf/HostConfig.xml");
         HashSet set = configurationParser.parseHostConfig();
         //Map<String,String> taskArguments = new HashMap<String, String>();
-        //taskArguments.put(HOST_PARAM, "localhost");
-        //taskArguments.put(PORT_PARAM, "5984");
-        //taskArguments.put(USERNAME_PARAM, "");
-        //taskArguments.put(PASSWORD_PARAM, "");
-
         //coucheDBMonitor.execute(taskArguments, null);
+    }
+    private void initialize(Map<String,String> taskArguments) throws Exception {
+        if (!isInitialized) {
+            ConfigurationParser configurationParser = new ConfigurationParser(taskArguments.get("hosts-config-path"));
+            hostConfigs = configurationParser.parseHostConfig();
+            isInitialized = true;
+        }
     }
 
 
@@ -51,15 +54,17 @@ public class CoucheDBMonitor extends AManagedMonitor{
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
         logger.info("Exceuting CoucheDBMonitor...");
         try {
-            if (!isInitialized) {
-                ConfigurationParser
+            initialize(taskArguments);
+
+            for (HostConfig hostConfig : hostConfigs) {
+                CouchDBRESTWrapper couchDBRESTWrapper = new CouchDBRESTWrapper(hostConfig);
+                HashMap metrics = couchDBRESTWrapper.gatherMetrics();
+                logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
+                //printMetrics(metrics);
+                logger.info("Printed metrics successfully");
             }
-            CouchDBRESTWrapper couchDBRESTWrapper = new CouchDBRESTWrapper(taskArguments);
-            HashMap metrics = couchDBRESTWrapper.gatherMetrics();
-            logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
-            //printMetrics(metrics);
-            logger.info("Printed metrics successfully");
             return new TaskOutput("Task successful...");
+
         } catch(MalformedURLException e) {
             logger.error("Check the url for the host", e);
         } catch (Exception e) {

@@ -6,31 +6,20 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 
 public class CouchDBRESTWrapper {
 
     private static final Logger logger = Logger.getLogger(CouchDBRESTWrapper.class.getSimpleName());
+    private HostConfig hostConfig;
 
-    private String host;
-    private String port;
-    private String username;
-
-    private String password;
-
-
-    public CouchDBRESTWrapper(Map<String,String> taskArguments) {
-        host = taskArguments.get("host");
-        port = taskArguments.get("port");
-        username = taskArguments.get("username");
-        password = taskArguments.get("password");
+    public CouchDBRESTWrapper(HostConfig hostConfig) {
+        this.hostConfig = hostConfig;
     }
 
     public HashMap gatherMetrics() throws Exception{
@@ -54,7 +43,6 @@ public class CouchDBRESTWrapper {
             JsonObject jsonObject = new JsonParser().parse(jsonString.toString()).getAsJsonObject();
 
             System.out.println("done");
-
 
 
             //metrics = convertResponseToMap(is);
@@ -85,13 +73,13 @@ public class CouchDBRESTWrapper {
     private String constructURL() {
         return new StringBuilder()
                 .append("http://")
-                .append(username)
+                .append(hostConfig.username)
                 .append(":")
-                .append(password)
+                .append(hostConfig.password)
                 .append("@")
-                .append(host)
+                .append(hostConfig.hostId)
                 .append(":")
-                .append(port)
+                .append(hostConfig.port)
                 .append("/_stats")
                 .toString();
     }
