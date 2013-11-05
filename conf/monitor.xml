@@ -1,23 +1,25 @@
 <monitor>
-        <name>EhcacheMonitor</name>
+        <name>CoucheDBMonitor</name>
         <type>managed</type>
-        <description>Ehcache Monitor</description>
+        <description>CoucheDB Monitor</description>
         <monitor-configuration></monitor-configuration>
         <monitor-run-task>
                 <execution-style>periodic</execution-style>
                 <execution-frequency-in-seconds>60</execution-frequency-in-seconds>
-                <name>Ehcache Monitor Run Task</name>
-                <display-name>Ehcache Monitor Task</display-name>
-                <description>Ehcache Monitor Task</description>
+                <name>CoucheDB Monitor Run Task</name>
+                <display-name>CoucheDB Monitor Task</display-name>
+                <description>CoucheDB Monitor Task</description>
                 <type>java</type>
                 <execution-timeout-in-secs>60</execution-timeout-in-secs>
                 <java-task>
-                    <classpath>EhcacheMonitor.jar;lib/log4j-1.2.15.jar;lib/machineagent.jar;lib/commons-lang-2.4.jar</classpath>
-                        <impl-class>com.appdynamics.monitors.ehcache.EhcacheMonitor</impl-class>
+                    <classpath>CoucheDBMonitor.jar;lib/log4j-1.2.15.jar;lib/machineagent.jar;lib/gson-2.2.2.jar</classpath>
+                        <impl-class>com.appdynamics.monitors.couchedb.CoucheDBMonitor</impl-class>
                 </java-task>
                 <task-arguments>
                     <argument name="host" is-required="true" default-value="localhost"/>
-                    <argument name="port" is-required="true" default-value="8080"/>
+                    <argument name="port" is-required="true" default-value="5984"/>
+                    <argument name="username" is-required="true" default-value="username"/>
+                    <argument name="password" is-required="true" default-value="password"/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>

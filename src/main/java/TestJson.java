@@ -1,7 +1,6 @@
 import com.google.gson.*;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileReader;
 
 public class TestJson {
@@ -16,6 +15,7 @@ public class TestJson {
             while ((currentLine = bufferedReader.readLine()) != null) {
                 jsonString.append(currentLine);
             }
+
             JsonObject jsonObject = new JsonParser().parse(jsonString.toString()).getAsJsonObject();
             System.out.println("done");
 

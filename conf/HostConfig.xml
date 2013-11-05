@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Hosts>
+    <Host id="localhost" port="5984" username="username" password="password"/>
+    <Host id="localhost" port="5984" username="username" password="password"/>
+    <Host id="localhost" port="5984" username="username" password="password"/>
+    <Host id="localhost" port="5984" username="username" password="password"/>
+    <Host id="localhost" port="5984" username="username" password="password"/>    
+</Hosts>
