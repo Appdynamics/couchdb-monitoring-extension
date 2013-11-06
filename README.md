@@ -45,7 +45,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 ## Metrics
 
-# Metric Category: couchdb
+### Metric Category: couchdb
 
 |Metric Name           | Description     |
 |----------------------|-----------------|
@@ -55,7 +55,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 |open_os_files         | Number of file descriptors CouchDB has open |
 |request_time          | Length of a request inside CouchDB without MochiWeb |
 
-# Metric Category: httpd
+### Metric Category: httpd
 
 |Metric Name           | Description     |
 |----------------------|-----------------|
@@ -64,7 +64,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 |temporary_view_reads  | Number of temporary view reads |
 |view_reads            | Number of view reads |
 
-# Metric Category: httpd_request_methods
+### Metric Category: httpd_request_methods
 
 |Metric Name           | Description     |
 |----------------------|-----------------|
@@ -76,7 +76,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 |POST                  | Number of HTTP POST requests |
 |PUT                   | Number of HTTP PUT requests |
 
-# Metric Category: httpd_status_codes
+### Metric Category: httpd_status_codes
 
 |Metric Name           | Description     |
 |----------------------|-----------------|
