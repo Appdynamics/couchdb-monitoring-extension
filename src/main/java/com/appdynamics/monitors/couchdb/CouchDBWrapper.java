@@ -23,6 +23,10 @@ public class CouchDBWrapper {
         this.hostConfig = hostConfig;
     }
 
+    /**
+     * Connects to the couchDB host and retrieves metrics using the CouchDB REST API
+     * @return 	HashMap     Map containing metrics retrieved from using the CouchDB REST API
+     */
     public HashMap gatherMetrics() throws Exception{
         HttpURLConnection connection = null;
         InputStream is = null;
@@ -63,6 +67,12 @@ public class CouchDBWrapper {
     }
 
 
+    /**
+     * Constructs a HashMap of metrics based on the JSON Response received upon executing
+     * CouchDB's /_stats REST API request
+     * @param   metricsObject   JSON Response object
+     * @return  HashMap     Map containing the couchDB host metrics
+     */
     private HashMap constructMetricsMap(JsonObject metricsObject) throws Exception {
         // 1st level: Metric Category
         // 2nd level: Metric Name

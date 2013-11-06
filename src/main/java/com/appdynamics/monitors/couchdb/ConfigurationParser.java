@@ -30,6 +30,10 @@ public class ConfigurationParser {
         this.filePath = filePath;
     }
 
+    /**
+     * Parses the hosts' configuration file
+     * @return  HashSet     Set containing all host configurations
+     */
     public HashSet<HostConfig> parseHostConfig() throws Exception{
         HashSet<HostConfig> hostConfigs = new HashSet<HostConfig>();
         try {

@@ -28,6 +28,11 @@ public class CouchDBMonitor extends AManagedMonitor{
         taskArguments.put("hosts-config-path", "conf/HostsConfig.xml");
         couchDBMonitor.execute(taskArguments, null);
     }
+
+    /**
+     * Initializes the host configurations
+     * @param   taskArguments   Map of task arguments.
+     */
     private void initialize(Map<String,String> taskArguments) throws Exception {
         if (!isInitialized) {
             logger.info("Reading hosts' configuration...");
@@ -61,9 +66,9 @@ public class CouchDBMonitor extends AManagedMonitor{
         return new TaskOutput("Task failed with errors");
     }
     /**
-     * Writes the cache metrics to the controller
-     * @param hostId            Name of the CoucheDB host
-     * @param 	metricsMap		HashMap containing all the cache metrics
+     * Writes the couchDB metrics to the controller
+     * @param   hostId          Name of the CouchDB host
+     * @param 	metricsMap		HashMap containing all the couchDB metrics
      */
     private void printMetrics(String hostId, HashMap metricsMap) throws Exception{
         HashMap<String, HashMap<String, Number>> metrics = (HashMap<String,HashMap<String,Number>>) metricsMap;
