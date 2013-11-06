@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 
 public class ConfigurationParser {
@@ -61,6 +62,9 @@ public class ConfigurationParser {
             throw e;
         } catch(SAXException e) {
             logger.error("Unable to parse the file");
+            throw e;
+        } catch (IOException e) {
+            logger.error("IOException", e);
             throw e;
         }
         return hostConfigs;

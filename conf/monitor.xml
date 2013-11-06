@@ -16,11 +16,7 @@
                         <impl-class>com.appdynamics.monitors.couchdb.CouchDBMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <!-- <argument name="host" is-required="true" default-value="localhost"/>
-                    <argument name="port" is-required="true" default-value="5984"/>
-                    <argument name="username" is-required="true" default-value="username"/>
-                    <argument name="password" is-required="true" default-value="password"/> -->
-                    <argument name="hosts-config-path" is-required="false" default-value="monitors/CouchDBMonitor/conf/HostsConfig.xml"/>
+                    <argument name="hosts-config-path" is-required="true" default-value="monitors/CouchDBMonitor/conf/HostsConfig.xml"/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>

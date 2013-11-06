@@ -1,9 +1,12 @@
 package com.appdynamics.monitors.couchdb;
 
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,7 +19,7 @@ import java.util.Map;
 public class CouchDBWrapper {
 
     private static final Logger logger = Logger.getLogger(CouchDBWrapper.class.getSimpleName());
-    private static final String SUM_VALUE = "sum";
+    private static final String CURRENT_VALUE = "current";
     private HostConfig hostConfig;
 
     public CouchDBWrapper(HostConfig hostConfig) {
@@ -35,6 +38,7 @@ public class CouchDBWrapper {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
             connection.setRequestMethod("GET");
+            logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
             connection.connect();
             is = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -48,20 +52,23 @@ public class CouchDBWrapper {
             HashMap hostMetrics = constructMetricsMap(jsonObject);
             return hostMetrics;
         } catch(MalformedURLException e) {
-            logger.error("Invalid URL used to connect to CoucheDB: " + cacheServerUrl);
+            logger.error("Invalid URL used to connect to CouchDB: " + cacheServerUrl, e);
             throw e;
         } catch(JsonSyntaxException e) {
-            logger.error("Error parsing the Json response");
+            logger.error("Error parsing the Json response", e);
+            throw e;
+        } catch(IOException e) {
+            logger.error("IOException", e);
             throw e;
         }
         finally {
             try {
-                is.close();
-                connection.disconnect();
-            } catch (NullPointerException npe) {
-                throw npe;
-            } catch (Exception e) {
-                throw e;
+                if (is != null && connection != null) {
+                    is.close();
+                    connection.disconnect();
+                }
+            }catch(Exception e) {
+                logger.error("Exception", e);
             }
         }
     }
@@ -92,8 +99,8 @@ public class CouchDBWrapper {
                 String metricName = metricNameEntry.getKey();
                 JsonObject metricValuesObject = metricNameEntry.getValue();
 
-                if (!metricValuesObject.get(SUM_VALUE).isJsonNull()) {
-                    Number metricValue = metricValuesObject.get(SUM_VALUE).getAsNumber();
+                if (!metricValuesObject.get(CURRENT_VALUE).isJsonNull()) {
+                    Number metricValue = metricValuesObject.get(CURRENT_VALUE).getAsNumber();
                     metricsNameMap.put(metricName, metricValue);
                 }
             }

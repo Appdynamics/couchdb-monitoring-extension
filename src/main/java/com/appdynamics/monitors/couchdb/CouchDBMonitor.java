@@ -35,6 +35,7 @@ public class CouchDBMonitor extends AManagedMonitor{
      */
     private void initialize(Map<String,String> taskArguments) throws Exception {
         if (!isInitialized) {
+            logger.setLevel(Level.INFO);
             logger.info("Reading hosts' configuration...");
             ConfigurationParser configurationParser = new ConfigurationParser(taskArguments.get("hosts-config-path"));
             hostConfigs = configurationParser.parseHostConfig();
