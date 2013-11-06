@@ -5,6 +5,7 @@ This eXtension works only with the Java agent.
 
 ## Use Case
 
+Apache CouchDB, commonly referred to as CouchDB, is an open source database that focuses on ease of use and on being "a database that completely embraces the web".It is a NoSQL database that uses JSON to store data, JavaScript as its query language using MapReduce, and HTTP for an API. The CouchDB monitoring extension gathers metrics for the specified hosts that have couchDB installed. 
 
 ## Installation
 <ol>
@@ -21,7 +22,7 @@ This eXtension works only with the Java agent.
 </pre>
 	</li>	
 	<li>Open &lt;machineagent install dir&gt;/monitors/CouchDBMonitor/conf/HostsConfig.xml and configure the CouchDB hosts.
-<p>The hostId, port, username, and password need to be configured</p>
+<p>The host id, port, username, and password need to be configured for each host. Here is a sample configuration for one host: </p>
 <pre>
 	&lt;Host id="localhost" port="5984" username="username" password="password"/&gt;          
 </pre>
@@ -44,17 +45,38 @@ This eXtension works only with the Java agent.
 
 ## Metrics
 
-|Metric Name           | Description     |
-|----------------------|-----------------|
-|averageGetTime    	   | The average time to retrieve the requested item from the cache |
-|cacheHits             | The number of times a requested item was found in the cache |
-|diskStoreSize         | The size of the disk store |
-|evictionCount         | The number of cache evictions, since the cache was created, or statistics were cleared |
-|inMemoryHits          | Number of times a requested item was found in the memory store |
-|memoryStoreSize       | The size of the memory store |
-|misses                | Number of times a requested item was not found in the cache |
-|onDiskHits            | Number of kepspace misses per minute |
-|size                  | Size of the cache |
+{couchdb, database_writes}, number of times a database was changed}
+{couchdb, database_reads}, number of times a document was read from a database}
+{couchdb, open_databases}, number of open databases}
+{couchdb, open_os_files}, number of file descriptors CouchDB has open}
+{couchdb, request_time}, length of a request inside CouchDB without MochiWeb}
+
+{httpd, bulk_requests}, number of bulk requests}
+{httpd, requests}, number of HTTP requests}
+{httpd, temporary_view_reads}, number of temporary view reads}
+{httpd, view_reads}, number of view reads}
+
+{httpd_request_methods, 'COPY'}, number of HTTP COPY requests}
+{httpd_request_methods, 'DELETE'}, number of HTTP DELETE requests}
+{httpd_request_methods, 'GET'}, number of HTTP GET requests}
+{httpd_request_methods, 'HEAD'}, number of HTTP HEAD requests}
+{httpd_request_methods, 'MOVE'}, number of HTTP MOVE requests}
+{httpd_request_methods, 'POST'}, number of HTTP POST requests}
+{httpd_request_methods, 'PUT'}, number of HTTP PUT requests}
+
+{httpd_status_codes, '200'}, number of HTTP 200 OK responses}
+{httpd_status_codes, '201'}, number of HTTP 201 Created responses}
+{httpd_status_codes, '202'}, number of HTTP 202 Accepted responses}
+{httpd_status_codes, '301'}, number of HTTP 301 Moved Permanently responses}
+{httpd_status_codes, '304'}, number of HTTP 304 Not Modified responses}
+{httpd_status_codes, '400'}, number of HTTP 400 Bad Request responses}
+{httpd_status_codes, '401'}, number of HTTP 401 Unauthorized responses}
+{httpd_status_codes, '403'}, number of HTTP 403 Forbidden responses}
+{httpd_status_codes, '404'}, number of HTTP 404 Not Found responses}
+{httpd_status_codes, '405'}, number of HTTP 405 Method Not Allowed responses}
+{httpd_status_codes, '409'}, number of HTTP 409 Conflict responses}
+{httpd_status_codes, '412'}, number of HTTP 412 Precondition Failed responses}
+{httpd_status_codes, '500'}, number of HTTP 500 Internal Server Error responses}
 
 ## Custom Dashboard
 
