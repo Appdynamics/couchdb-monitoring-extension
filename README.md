@@ -45,38 +45,54 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 ## Metrics
 
-{couchdb, database_writes}, number of times a database was changed}
-{couchdb, database_reads}, number of times a document was read from a database}
-{couchdb, open_databases}, number of open databases}
-{couchdb, open_os_files}, number of file descriptors CouchDB has open}
-{couchdb, request_time}, length of a request inside CouchDB without MochiWeb}
+# Metric Category: couchdb
 
-{httpd, bulk_requests}, number of bulk requests}
-{httpd, requests}, number of HTTP requests}
-{httpd, temporary_view_reads}, number of temporary view reads}
-{httpd, view_reads}, number of view reads}
+|Metric Name           | Description     |
+|----------------------|-----------------|
+|database_writes       | Number of times a database was changed |
+|database_reads        | Number of times a document was read from a database |
+|open_databases        | Number of open databases |
+|open_os_files         | Number of file descriptors CouchDB has open |
+|request_time          | Length of a request inside CouchDB without MochiWeb |
 
-{httpd_request_methods, 'COPY'}, number of HTTP COPY requests}
-{httpd_request_methods, 'DELETE'}, number of HTTP DELETE requests}
-{httpd_request_methods, 'GET'}, number of HTTP GET requests}
-{httpd_request_methods, 'HEAD'}, number of HTTP HEAD requests}
-{httpd_request_methods, 'MOVE'}, number of HTTP MOVE requests}
-{httpd_request_methods, 'POST'}, number of HTTP POST requests}
-{httpd_request_methods, 'PUT'}, number of HTTP PUT requests}
+# Metric Category: httpd
 
-{httpd_status_codes, '200'}, number of HTTP 200 OK responses}
-{httpd_status_codes, '201'}, number of HTTP 201 Created responses}
-{httpd_status_codes, '202'}, number of HTTP 202 Accepted responses}
-{httpd_status_codes, '301'}, number of HTTP 301 Moved Permanently responses}
-{httpd_status_codes, '304'}, number of HTTP 304 Not Modified responses}
-{httpd_status_codes, '400'}, number of HTTP 400 Bad Request responses}
-{httpd_status_codes, '401'}, number of HTTP 401 Unauthorized responses}
-{httpd_status_codes, '403'}, number of HTTP 403 Forbidden responses}
-{httpd_status_codes, '404'}, number of HTTP 404 Not Found responses}
-{httpd_status_codes, '405'}, number of HTTP 405 Method Not Allowed responses}
-{httpd_status_codes, '409'}, number of HTTP 409 Conflict responses}
-{httpd_status_codes, '412'}, number of HTTP 412 Precondition Failed responses}
-{httpd_status_codes, '500'}, number of HTTP 500 Internal Server Error responses}
+|Metric Name           | Description     |
+|----------------------|-----------------|
+|bulk_requests         | Number of bulk requests |
+|requests              | Number of HTTP requests |
+|temporary_view_reads  | Number of temporary view reads |
+|view_reads            | Number of view reads |
+
+# Metric Category: httpd_request_methods
+
+|Metric Name           | Description     |
+|----------------------|-----------------|
+|COPY       		   | Number of HTTP COPY requests |
+|DELETE                | Number of HTTP DELETE requests |
+|GET                   | Number of HTTP GET requests |
+|HEAD                  | Number of HTTP HEAD requests |
+|MOVE                  | Number of HTTP MOVE requests |
+|POST                  | Number of HTTP POST requests |
+|PUT                   | Number of HTTP PUT requests |
+
+# Metric Category: httpd_status_codes
+
+|Metric Name           | Description     |
+|----------------------|-----------------|
+|201       			   | Number of HTTP 200 OK responses |
+|201        		   | Number of HTTP 201 Created responses |
+|202        		   | Number of HTTP 202 Accepted responses |
+|301         		   | Number of HTTP 301 Moved Permanently responses |
+|304          		   | Number of HTTP 304 Not Modified responses |
+|400         		   | Number of HTTP 400 Bad Request responses |
+|401                   | Number of HTTP 401 Unauthorized responses|
+|403  				   | Number of HTTP 403 Forbidden responses |
+|404            	   | Number of HTTP 404 Not Found responses |
+|405       		   	   | Number of HTTP 405 Method Not Allowed responses |
+|409                   | Number of HTTP 409 Conflict responses |
+|412                   | Number of HTTP 412 Precondition Failed responses |
+|500                   | Number of  HTTP 500 Internal Server Error responses} |
 
 ## Custom Dashboard
 
