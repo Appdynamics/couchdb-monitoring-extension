@@ -13,20 +13,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-public class CoucheDBMonitor extends AManagedMonitor{
+public class CouchDBMonitor extends AManagedMonitor{
 
-    private static final String METRIC_PREFIX = "Custom Metrics|CoucheDB|HostId|";
+    private static final String METRIC_PREFIX = "Custom Metrics|CouchDB|HostId|";
     private HashSet<HostConfig> hostConfigs = new HashSet<HostConfig>();
     private boolean isInitialized = false;
 
-    private static final Logger logger = Logger.getLogger(CoucheDBMonitor.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(CouchDBMonitor.class.getSimpleName());
 
     public static void main(String[] args) throws Exception{
         logger.setLevel(Level.DEBUG);
-        CoucheDBMonitor coucheDBMonitor = new CoucheDBMonitor();
+        CouchDBMonitor couchDBMonitor = new CouchDBMonitor();
         Map<String,String> taskArguments = new HashMap<String, String>();
         taskArguments.put("hosts-config-path", "conf/HostsConfig.xml");
-        coucheDBMonitor.execute(taskArguments, null);
+        couchDBMonitor.execute(taskArguments, null);
     }
     private void initialize(Map<String,String> taskArguments) throws Exception {
         if (!isInitialized) {
@@ -42,17 +42,15 @@ public class CoucheDBMonitor extends AManagedMonitor{
      * @see com.singularity.ee.agent.systemagent.api.ITask#execute(java.util.Map, com.singularity.ee.agent.systemagent.api.TaskExecutionContext)
      */
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
-        logger.info("Exceuting CoucheDBMonitor...");
+        logger.info("Exceuting CouchDBMonitor...");
         try {
             initialize(taskArguments);
 
             for (HostConfig hostConfig : hostConfigs) {
                 CouchDBWrapper couchDBWrapper = new CouchDBWrapper(hostConfig);
                 HashMap metrics = couchDBWrapper.gatherMetrics();
-                printMetrics(hostConfig.hostId, metrics);
-
                 logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
-                //printMetrics(metrics);
+                printMetrics(hostConfig.hostId, metrics);
                 logger.info("Printed metrics successfully");
             }
             return new TaskOutput("Task successful...");
