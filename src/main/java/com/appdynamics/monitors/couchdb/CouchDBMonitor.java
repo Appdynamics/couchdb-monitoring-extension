@@ -48,10 +48,9 @@ public class CouchDBMonitor extends AManagedMonitor{
      * @see com.singularity.ee.agent.systemagent.api.ITask#execute(java.util.Map, com.singularity.ee.agent.systemagent.api.TaskExecutionContext)
      */
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
-        logger.info("Exceuting CouchDBMonitor...");
         try {
             initialize(taskArguments);
-
+            logger.info("Exceuting CouchDBMonitor...");
             for (HostConfig hostConfig : hostConfigs) {
                 CouchDBWrapper couchDBWrapper = new CouchDBWrapper(hostConfig);
                 HashMap metrics = couchDBWrapper.gatherMetrics();
@@ -60,7 +59,6 @@ public class CouchDBMonitor extends AManagedMonitor{
                 logger.info("Printed metrics successfully");
             }
             return new TaskOutput("Task successful...");
-
         } catch (Exception e) {
             logger.error("Exception: ", e);
         }

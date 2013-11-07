@@ -1,5 +1,6 @@
 package com.appdynamics.monitors.couchdb;
 
+import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

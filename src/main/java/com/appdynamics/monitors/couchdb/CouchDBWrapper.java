@@ -3,6 +3,7 @@ package com.appdynamics.monitors.couchdb;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -52,13 +53,12 @@ public class CouchDBWrapper {
             HashMap hostMetrics = constructMetricsMap(jsonObject);
             return hostMetrics;
         } catch(MalformedURLException e) {
-            logger.error("Invalid URL used to connect to CouchDB: " + cacheServerUrl, e);
+            logger.error("Invalid URL used to connect to CouchDB: " + cacheServerUrl);
             throw e;
         } catch(JsonSyntaxException e) {
-            logger.error("Error parsing the Json response", e);
+            logger.error("Error parsing the Json response");
             throw e;
         } catch(IOException e) {
-            logger.error("IOException", e);
             throw e;
         }
         finally {
