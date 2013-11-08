@@ -3,7 +3,6 @@ package com.appdynamics.monitors.couchdb;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -72,7 +71,6 @@ public class CouchDBWrapper {
             }
         }
     }
-
 
     /**
      * Constructs a HashMap of metrics based on the JSON Response received upon executing
