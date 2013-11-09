@@ -124,4 +124,43 @@ public class CouchDBWrapper {
                 .append("/_stats")
                 .toString();
     }
+
+    public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
+        if (oldValues == null || oldValues.isEmpty()) {
+            return newValues;
+        }
+
+        // Essentially want to subtract. i.e. newValues - oldValues = actual values in the interval
+        HashMap<String, HashMap<String, Number>> currentMetrics = new HashMap<String, HashMap<String, Number>>();
+        Iterator newValuesIterator = newValues.keySet().iterator();
+
+        while (newValuesIterator.hasNext()) {
+            String metricCategory = (String) newValuesIterator.next();
+            if (oldValues.containsKey(metricCategory)) {
+                HashMap oldMetricMap = (HashMap) oldValues.get(metricCategory);
+                HashMap newMetricMap = (HashMap) newValues.get(metricCategory);
+                HashMap currentMetricMap = new HashMap<String, Number>();
+                Iterator newMetricMapIterator = newMetricMap.keySet().iterator();
+                currentMetrics.put(metricCategory, currentMetricMap);
+
+                while (newMetricMapIterator.hasNext()) {
+                    String metricName = (String) newMetricMapIterator.next();
+                    Double newMetricValue = ((Number) newMetricMap.get(metricName)).doubleValue();
+                    if (oldMetricMap.containsKey(metricName)) { // Need to subtract in order to get current values
+                        Double oldMetricValue = ((Number) oldMetricMap.get(metricName)).doubleValue();
+                        if (newMetricValue - oldMetricValue > 0) {
+                            currentMetricMap.put(metricName, newMetricValue - oldMetricValue);
+                        }
+                        else {
+                            currentMetricMap.put(metricName, newMetricValue);
+                        }
+                    }
+                    else { // this is a new metric that is not present in the old metrics map
+                        currentMetricMap.put(metricName, newMetricValue);
+                    }
+                }
+            }
+        }
+        return currentMetrics;
+    }
 }

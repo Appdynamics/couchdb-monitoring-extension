@@ -18,6 +18,7 @@ public class CouchDBMonitor extends AManagedMonitor{
     private static final String METRIC_PREFIX = "Custom Metrics|CouchDB|HostId|";
     private HashSet<HostConfig> hostConfigs = new HashSet<HostConfig>();
     private boolean isInitialized = false;
+    private static HashMap cachedValues = new HashMap();
 
     private static final Logger logger = Logger.getLogger(CouchDBMonitor.class.getSimpleName());
 
@@ -54,8 +55,10 @@ public class CouchDBMonitor extends AManagedMonitor{
             for (HostConfig hostConfig : hostConfigs) {
                 CouchDBWrapper couchDBWrapper = new CouchDBWrapper(hostConfig);
                 HashMap metrics = couchDBWrapper.gatherMetrics();
+                HashMap currentMetrics = couchDBWrapper.calculateCurrentMetrics(cachedValues, metrics);
                 logger.info("Gathered metrics successfully. Size of metrics: " + metrics.size());
-                printMetrics(hostConfig.hostId, metrics);
+                printMetrics(hostConfig.hostId, currentMetrics);
+                cachedValues = metrics;
                 logger.info("Printed metrics successfully");
             }
             return new TaskOutput("Task successful...");
