@@ -51,7 +51,7 @@ public class CouchDBMonitor extends AManagedMonitor{
     public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
         try {
             initialize(taskArguments);
-            logger.info("Exceuting CouchDBMonitor...");
+            logger.info("Executing CouchDBMonitor...");
             for (HostConfig hostConfig : hostConfigs) {
                 CouchDBWrapper couchDBWrapper = new CouchDBWrapper(hostConfig);
                 HashMap metrics = couchDBWrapper.gatherMetrics();
