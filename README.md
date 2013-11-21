@@ -97,7 +97,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 ## Custom Dashboard
 
-![](https://raw.github.com/Appdynamics/couchedb-monitoring-extension/master/CouchDB%20Dashboard.png?token=2880440__eyJzY29wZSI6IlJhd0Jsb2I6QXBwZHluYW1pY3MvY291Y2hlZGItbW9uaXRvcmluZy1leHRlbnNpb24vbWFzdGVyL0NvdWNoREIgRGFzaGJvYXJkLnBuZyIsImV4cGlyZXMiOjEzODU1ODEyMzV9--06b1379de823f6a92be69ada5cb9bf23635b33e5)
+![](https://raw.github.com/Appdynamics/couchdb-monitoring-extension/master/CouchDB%20Dashboard.png?token=2880440__eyJzY29wZSI6IlJhd0Jsb2I6QXBwZHluYW1pY3MvY291Y2hlZGItbW9uaXRvcmluZy1leHRlbnNpb24vbWFzdGVyL0NvdWNoREIgRGFzaGJvYXJkLnBuZyIsImV4cGlyZXMiOjEzODU1ODEyMzV9--06b1379de823f6a92be69ada5cb9bf23635b33e5)
 
 ##Contributing
 
