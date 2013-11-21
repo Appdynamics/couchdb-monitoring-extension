@@ -15,7 +15,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 	</li>
 	<li>Unzip the deployed file.
 	</li>
-	<li> (OPTIONAL) Open &lt;machineagent install dir&gt;/monitors/CouchDBMonitor/conf/monitor.xml and configure the couchDB parameters.
+	<li> (OPTIONAL) Open &lt;machineagent install dir&gt;/monitors/CouchDBMonitor/monitor.xml and configure the couchDB parameters.
 <p></p>
 <pre>
 	&lt;argument name="hosts-config-path" is-required="true" default-value="monitors/CouchDBMonitor/conf/HostsConfig.xml" /&gt;          
