@@ -53,7 +53,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 |database_reads        | Number of times a document was read from a database |
 |open_databases        | Number of open databases |
 |open_os_files         | Number of file descriptors CouchDB has open |
-|request_time          | Length of a request inside CouchDB without MochiWeb |
+|request_time          | Length of a request (ms) inside CouchDB |
 
 ### Metric Category: httpd
 
