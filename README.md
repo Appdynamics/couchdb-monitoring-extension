@@ -1,17 +1,17 @@
 CouchDB Monitoring Extension
 ============================
+This eXtension works only with the standalone machine agent.
 
-This eXtension works only with the Java agent.
 
 ## Use Case
 
-Apache CouchDB, commonly referred to as CouchDB, is an open source database that focuses on ease of use and on being "a database that completely embraces the web".It is a NoSQL database that uses JSON to store data, JavaScript as its query language using MapReduce, and HTTP for an API. The CouchDB monitoring extension gathers metrics for the specified hosts that have couchDB installed. 
+Apache CouchDB, commonly referred to as CouchDB, is an open source database that focuses on ease of use and on being "a database that completely embraces the web." It is a NoSQL database that uses JSON to store data, uses JavaScript as its query language using MapReduce, and uses HTTP for an API. The CouchDB monitoring extension gathers metrics for the specified hosts that have couchDB installed. 
 
 ## Installation
 <ol>
-	<li>Type 'ant package' in the command line from the couchedb-monitoring-extension directory.
+	<li>Type 'ant package' in the command line from the couchdb-monitoring-extension directory.
 	</li>
-	<li>Deploy the file couchedbMonitor.zip found in the 'dist' directory into the &lt;machineagent install dir&gt;/monitors/ directory.
+	<li>Deploy the file couchdbMonitor.zip found in the 'dist' directory into the &lt;machineagent install dir&gt;/monitors/ directory.
 	</li>
 	<li>Unzip the deployed file.
 	</li>
@@ -37,7 +37,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 | Directory/File | Description |
 |----------------|-------------|
-|conf            | Contains the monitor.xml |
+|conf            | Contains the monitor.xml file|
 |lib             | Contains third-party project references |
 |src             | Contains source code of the CouchDB monitoring extension |
 |dist            | Only obtained when using ant. Run 'ant build' to get binaries. Run 'ant package' to get the distributable .zip file |
@@ -92,7 +92,8 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 |405       		   	   | Number of HTTP 405 Method Not Allowed responses |
 |409                   | Number of HTTP 409 Conflict responses |
 |412                   | Number of HTTP 412 Precondition Failed responses |
-|500                   | Number of  HTTP 500 Internal Server Error responses} |
+|500                   | Number of  HTTP 500 Internal Server Error responses |
+
 
 ## Custom Dashboard
 
