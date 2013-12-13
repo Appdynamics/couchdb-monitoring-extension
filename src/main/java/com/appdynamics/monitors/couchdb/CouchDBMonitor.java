@@ -26,7 +26,7 @@ public class CouchDBMonitor extends AManagedMonitor{
         logger.setLevel(Level.DEBUG);
         CouchDBMonitor couchDBMonitor = new CouchDBMonitor();
         Map<String,String> taskArguments = new HashMap<String, String>();
-        taskArguments.put("hosts-config-path", "conf/HostsConfig.xml");
+        taskArguments.put("hosts-config-path", "conf/Blacklisted_IPs.xml");
         couchDBMonitor.execute(taskArguments, null);
     }
 
