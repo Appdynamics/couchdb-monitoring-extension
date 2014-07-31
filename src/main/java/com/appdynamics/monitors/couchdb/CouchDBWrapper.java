@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.xml.bind.DatatypeConverter;
 
 public class CouchDBWrapper {
 
@@ -38,6 +39,8 @@ public class CouchDBWrapper {
     private HostConfig hostConfig;
 
     public CouchDBWrapper(HostConfig hostConfig) {
+        String hostConfig.username = null;
+        String hostConfig.password = null;
         this.hostConfig = hostConfig;
     }
 
@@ -52,9 +55,10 @@ public class CouchDBWrapper {
         try {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
-            String userpass = hostConfig.username + ":" + hostConfig.password;
-            String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
-            connection.setRequestProperty("Authorization", basicAuth);
+            String basicAuth = constructBasicAuth();
+            if ( basicAuth != null ) {
+                connection.setRequestProperty("Authorization", basicAuth);
+            }
             connection.setRequestMethod("GET");
             logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
             connection.connect();
@@ -132,15 +136,21 @@ public class CouchDBWrapper {
     private String constructURL() {
         return new StringBuilder()
                 .append("http://")
-                .append(hostConfig.username)
-                .append(":")
-                .append(hostConfig.password)
-                .append("@")
                 .append(hostConfig.hostId)
                 .append(":")
                 .append(hostConfig.port)
                 .append("/_stats")
                 .toString();
+    }
+
+    private String constructAuth() {
+        if ( hostConfig.username = null || hostConfig.password = null ) {
+            return new String null;
+        }
+
+        String userpass = hostConfig.username + ":" + hostConfig.password;
+        String constructedAuth = "Basic " + DatatypeConverter.printBase64Binary(userpass.getBytes());
+        return constructedAuth;
     }
 
     public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
