@@ -19,7 +19,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import org.apache.log4j.Logger;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,10 +52,10 @@ public class CouchDBWrapper {
         try {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
-            String encoded = Base64.encode(hostConfig.username+":"hostConfig.password);
-            connection.setRequestProperty("Authorization", "Basic "+encoded);
+            String userpass = hostConfig.username + ":" + hostConfig.password;
+            String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+            connection.setRequestProperty("Authorization", basicAuth);
             connection.setRequestMethod("GET");
-            connection.addHeader("Authorization", "Basic " + getBasicAuthenticationEncoding());
             logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
             connection.connect();
             is = connection.getInputStream();
@@ -144,7 +143,7 @@ public class CouchDBWrapper {
                 .toString();
     }
 
-    public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
+     public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
         if (oldValues == null || oldValues.isEmpty()) {
             return newValues;
         }
