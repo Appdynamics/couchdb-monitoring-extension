@@ -39,8 +39,8 @@ public class CouchDBWrapper {
     private HostConfig hostConfig;
 
     public CouchDBWrapper(HostConfig hostConfig) {
-        String hostConfig.username;
-        String hostConfig.password;
+        hostConfig.username = null;
+        hostConfig.password = null;
         this.hostConfig = hostConfig;
     }
 
@@ -147,9 +147,9 @@ public class CouchDBWrapper {
                 .toString();
     }
 
-    private String constructAuth() {
-        if ( hostConfig.username = null || hostConfig.password = null ) {
-            return new String null;
+    private String constructBasicAuth() {
+        if ( hostConfig.username == null || hostConfig.password == null ) {
+            return null;
         }
 
         String userpass = hostConfig.username + ":" + hostConfig.password;
