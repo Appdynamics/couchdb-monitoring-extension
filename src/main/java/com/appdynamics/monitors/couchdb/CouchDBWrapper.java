@@ -39,8 +39,8 @@ public class CouchDBWrapper {
     private HostConfig hostConfig;
 
     public CouchDBWrapper(HostConfig hostConfig) {
-        String hostConfig.username = null;
-        String hostConfig.password = null;
+        String hostConfig.username;
+        String hostConfig.password;
         this.hostConfig = hostConfig;
     }
 
@@ -55,12 +55,16 @@ public class CouchDBWrapper {
         try {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
+            logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
             String basicAuth = constructBasicAuth();
             if ( basicAuth != null ) {
                 connection.setRequestProperty("Authorization", basicAuth);
+                logger.info ("Using Basic authentication");
+            } else {
+                logger.warn ("No authentication details defined. Skipping Basic auth headers.");
             }
+
             connection.setRequestMethod("GET");
-            logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
             connection.connect();
             is = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
