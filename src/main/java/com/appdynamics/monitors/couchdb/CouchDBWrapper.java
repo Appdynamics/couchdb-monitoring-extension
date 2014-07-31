@@ -143,7 +143,7 @@ public class CouchDBWrapper {
                 .toString();
     }
 
-     public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
+    public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
         if (oldValues == null || oldValues.isEmpty()) {
             return newValues;
         }
