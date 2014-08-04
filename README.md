@@ -9,13 +9,13 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 ## Installation
 <ol>
-	<li>Type 'ant package' in the command line from the couchdb-monitoring-extension directory.
+	<li>Run 'mvn clean install' in the command line from the couchdb-monitoring-extension directory.
 	</li>
-	<li>Deploy the file couchdbMonitor.zip found in the 'dist' directory into the &lt;machineagent install dir&gt;/monitors/ directory.
+	<li>Deploy the file CouchDBMonitor.zip found in the 'target' directory into `<MACHINE_AGENT_HOME>/monitors/` directory.
 	</li>
 	<li>Unzip the deployed file.
 	</li>
-	<li> (OPTIONAL) Open &lt;machineagent install dir&gt;/monitors/CouchDBMonitor/monitor.xml and configure the couchDB parameters.
+	<li> (OPTIONAL) Open `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/monitor.xml` and configure the couchDB parameters.
 <p></p>
 <pre>
 	&lt;argument name="hosts-config-path" is-required="true" default-value="monitors/CouchDBMonitor/conf/HostsConfig.xml" /&gt;          
@@ -37,11 +37,10 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 | Directory/File | Description |
 |----------------|-------------|
-|conf            | Contains the monitor.xml file|
-|lib             | Contains third-party project references |
-|src             | Contains source code of the CouchDB monitoring extension |
-|dist            | Only obtained when using ant. Run 'ant build' to get binaries. Run 'ant package' to get the distributable .zip file |
-|build.xml       | Ant build script to package the project (required only if changing Java code) |
+|src/main/resources/conf            | Contains the monitor.xml file|
+|src/main/java             | Contains source code of the CouchDB monitoring extension |
+|target            | Only obtained when using maven. Run 'mvn clean install' to get the distributable .zip file |
+|pom.xml       | Maven build script to package the project (required only if changing Java code) |
 
 ## Metrics
 

@@ -13,12 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.appdynamics.monitors.couchdb;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import org.apache.log4j.Logger;
+package com.appdynamics.extensions.couchdb;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +25,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.bind.DatatypeConverter;
+
+import org.apache.log4j.Logger;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class CouchDBWrapper {
 
@@ -54,8 +56,8 @@ public class CouchDBWrapper {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
             logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
-            String basicAuth = constructBasicAuth();
-            connection.setRequestProperty("Authorization", basicAuth);
+            //String basicAuth = constructBasicAuth();
+            //connection.setRequestProperty("Authorization", basicAuth);
             connection.setRequestMethod("GET");
             connection.connect();
             is = connection.getInputStream();
@@ -132,6 +134,10 @@ public class CouchDBWrapper {
     private String constructURL() {
         return new StringBuilder()
                 .append("http://")
+                .append(hostConfig.username)
+                .append(":")
+                .append(hostConfig.password)
+                .append("@")
                 .append(hostConfig.hostId)
                 .append(":")
                 .append(hostConfig.port)
