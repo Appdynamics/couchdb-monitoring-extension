@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.xml.bind.DatatypeConverter;
 
 public class CouchDBWrapper {
 
@@ -52,8 +53,10 @@ public class CouchDBWrapper {
         try {
             URL u = new URL(cacheServerUrl);
             connection = (HttpURLConnection) u.openConnection();
-            connection.setRequestMethod("GET");
             logger.info("Connecting to database for host: " + hostConfig.hostId + ":" + hostConfig.port);
+            String basicAuth = constructBasicAuth();
+            connection.setRequestProperty("Authorization", basicAuth);
+            connection.setRequestMethod("GET");
             connection.connect();
             is = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -129,15 +132,17 @@ public class CouchDBWrapper {
     private String constructURL() {
         return new StringBuilder()
                 .append("http://")
-                .append(hostConfig.username)
-                .append(":")
-                .append(hostConfig.password)
-                .append("@")
                 .append(hostConfig.hostId)
                 .append(":")
                 .append(hostConfig.port)
                 .append("/_stats")
                 .toString();
+    }
+
+    private String constructBasicAuth() {
+        String userpass = hostConfig.username + ":" + hostConfig.password;
+        String constructedAuth = "Basic " + DatatypeConverter.printBase64Binary(userpass.getBytes());
+        return constructedAuth;
     }
 
     public HashMap calculateCurrentMetrics(HashMap oldValues, HashMap newValues) {
