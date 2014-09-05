@@ -15,14 +15,19 @@
  */
 package com.appdynamics.extensions.couchdb;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.appdynamics.extensions.couchdb.api.CouchDBMetric;
+import com.appdynamics.extensions.couchdb.api.MetricAggregationType;
 import com.appdynamics.extensions.http.Response;
 import com.appdynamics.extensions.http.SimpleHttpClient;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -31,8 +36,7 @@ import com.google.gson.JsonParser;
 public class CouchDBWrapper {
 
 	private static final Logger logger = Logger.getLogger("com.singularity.extensions.CouchDBWrapper");
-	private static final String CURRENT_VALUE = "current";
-	private static final String STATS_URI = "/_stats";
+	private static final String STATS_URI = "/_stats?range=60";
 
 	/**
 	 * Connects to the couchDB host and retrieves metrics using the CouchDB REST
@@ -42,10 +46,10 @@ public class CouchDBWrapper {
 	 * @return HashMap Map containing metrics retrieved from using the CouchDB
 	 *         REST API
 	 */
-	public Map<String, Map<String, Number>> gatherMetrics(SimpleHttpClient httpClient) throws Exception {
+	public List<CouchDBMetric> gatherMetrics(SimpleHttpClient httpClient) throws Exception {
 		JsonObject statsResponse = getResponse(httpClient, STATS_URI);
-		Map<String, Map<String, Number>> hostMetrics = constructMetricsMap(statsResponse);
-		return hostMetrics;
+		List<CouchDBMetric> metricsList = constructMetricsList(statsResponse);
+		return metricsList;
 
 	}
 
@@ -93,66 +97,33 @@ public class CouchDBWrapper {
 	 * executing CouchDB's /_stats REST API request
 	 * 
 	 * @param metricsObject
-	 *            JSON Response object
-	 * @return HashMap Map containing the couchDB host metrics
+	 * @return
 	 */
-	private Map<String, Map<String, Number>> constructMetricsMap(JsonObject metricsObject) throws Exception {
+	public List<CouchDBMetric> constructMetricsList(JsonObject metricsObject) {
 		// 1st level: Metric Category
 		// 2nd level: Metric Name
-		Map<String, Map<String, Number>> hostMetrics = new HashMap<String, Map<String, Number>>();
-		for (Entry<String, JsonElement> group : metricsObject.entrySet()) {
-			String couchDBGroup = group.getKey();
-			JsonObject subGroup = group.getValue().getAsJsonObject();
-			Map<String, Number> metricsNameMap = new HashMap<String, Number>();
-			for (Entry<String, JsonElement> entry : subGroup.entrySet()) {
-				String metricName = entry.getKey();
-				JsonObject jsonObject = entry.getValue().getAsJsonObject();
-				if (!jsonObject.get(CURRENT_VALUE).isJsonNull()) {
-					Number metricValue = jsonObject.get(CURRENT_VALUE).getAsNumber();
-					metricsNameMap.put(metricName, metricValue);
-				}
-			}
-			hostMetrics.put(couchDBGroup, metricsNameMap);
-		}
-		return hostMetrics;
-	}
-
-	public Map<String, Map<String, Number>> calculateCurrentMetrics(Map<String, Map<String, Number>> oldValues,
-			Map<String, Map<String, Number>> newMetrics) {
-		if (oldValues == null || oldValues.isEmpty()) {
-			return newMetrics;
-		}
-		// Essentially want to subtract. i.e. newValues - oldValues = actual
-		// values in the interval
-		Map<String, Map<String, Number>> currentMetrics = new HashMap<String, Map<String, Number>>();
-
-		for (Map.Entry<String, Map<String, Number>> categoryMetricEntries : newMetrics.entrySet()) {
-			String metricCategory = categoryMetricEntries.getKey();
-			Map<String, Number> categoryMetrics = categoryMetricEntries.getValue();
-			if (oldValues.containsKey(metricCategory)) {
-				Map<String, Number> oldMetricsMap = oldValues.get(metricCategory);
-				Map<String, Number> currentMetricMap = new HashMap<String, Number>();
-
-				for (Map.Entry<String, Number> metricEntries : categoryMetrics.entrySet()) {
-					String metricName = metricEntries.getKey();
-					Double newMetricValue = metricEntries.getValue().doubleValue();
-					if (oldMetricsMap.containsKey(metricName)) {
-						Double oldMetricValue = oldMetricsMap.get(metricName).doubleValue();
-						if (newMetricValue - oldMetricValue > 0) {
-							currentMetricMap.put(metricName, newMetricValue - oldMetricValue);
-						} else {
-							currentMetricMap.put(metricName, newMetricValue);
-						}
-					} else { // this is a new metric that is not present in the
-								// old metrics map
-						currentMetricMap.put(metricName, newMetricValue);
+		// 3rd level: MetricAggregationType
+		List<CouchDBMetric> metricsList = Lists.newArrayList();
+		for (Entry<String, JsonElement> category : metricsObject.entrySet()) {
+			JsonObject categoryMetrics = category.getValue().getAsJsonObject();
+			for (Entry<String, JsonElement> metric : categoryMetrics.entrySet()) {
+				CouchDBMetric couchDBMetric = new CouchDBMetric();
+				couchDBMetric.setMetricCategory(category.getKey());
+				couchDBMetric.setMetricName(metric.getKey());
+				JsonObject jsonObject = metric.getValue().getAsJsonObject();
+				Map<MetricAggregationType, BigDecimal> values = Maps.newHashMap();
+				for (MetricAggregationType type : MetricAggregationType.values()) {
+					if (!jsonObject.get(type.getAggregationType()).isJsonNull()) {
+						BigDecimal metricValue = jsonObject.get(type.getAggregationType()).getAsBigDecimal();
+						logger.debug("Category:" + couchDBMetric.getMetricCategory() + " MetricName:" + couchDBMetric.getMetricName() + " " + type
+								+ ":" + metricValue);
+						values.put(type, metricValue);
 					}
 				}
-				currentMetrics.put(metricCategory, currentMetricMap);
-			} else {
-				currentMetrics.put(metricCategory, categoryMetrics);
+				couchDBMetric.setValues(values);
+				metricsList.add(couchDBMetric);
 			}
 		}
-		return currentMetrics;
+		return metricsList;
 	}
 }

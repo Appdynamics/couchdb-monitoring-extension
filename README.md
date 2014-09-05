@@ -7,37 +7,59 @@ This extension works only with the standalone machine agent.
 
 Apache CouchDB, commonly referred to as CouchDB, is an open source database that focuses on ease of use and on being "a database that completely embraces the web." It is a NoSQL database that uses JSON to store data, uses JavaScript as its query language using MapReduce, and uses HTTP for an API. The CouchDB monitoring extension gathers metrics for the specified hosts that have couchDB installed. 
 
-## Installation
-<ol>
-	<li>Run 'mvn clean install' in the command line from the couchdb-monitoring-extension directory.
-	</li>
-	<li>Deploy the file CouchDBMonitor.zip found in the 'target' directory into `<MACHINE_AGENT_HOME>/monitors/` directory.
-	</li>
-	<li>Unzip the deployed file.
-	</li>
-	<li> (OPTIONAL) Open `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/monitor.xml` and configure the couchDB parameters.
-<p></p>
-<pre>
-	&lt;argument name="hosts-config-path" is-required="true" default-value="monitors/CouchDBMonitor/conf/HostsConfig.xml" /&gt;          
-</pre>
-	</li>	
-	<li>Open &lt;machineagent install dir&gt;/monitors/CouchDBMonitor/conf/HostsConfig.xml and configure the CouchDB hosts.
-<p>The host id, port, username, and password need to be configured for each host. Here is a sample configuration for one host: </p>
-<pre>
-	&lt;Host id="localhost" port="5984" username="username" password="password"/&gt;          
-</pre>
-	</li>	
-	<li> Restart the machine agent.
-	</li>
-	<li>In the AppDynamics Metric Browser, look for: Application Infrastructure Performance | &lt;Tier&gt; | Custom Metrics | CouchDB
-	</li>
-</ol>
+## Installation ##
+
+1. Run "mvn clean install" and find the CouchDBMonitor.zip file in the "target" folder. You can also download the CouchDBMonitor.zip from [AppDynamics Exchange][http://community.appdynamics.com/t5/eXchange-Community-AppDynamics/CouchDB-Monitoring-Extension/idi-p/5537].
+2. Unzip as "CouchDBMonitor" and copy the "CouchDBMonitor" directory to `<MACHINE_AGENT_HOME>/monitors`
+
+## Configuration ##
+
+Note : Please make sure to not use tab (\t) while editing yaml files. You may want to validate the yaml file using a [yaml validator](http://yamllint.com/)
+
+1. Configure the couchdb instances by editing the config.yml file in `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/`.
+
+   For eg.
+   ```
+        # List of couchdb instances
+        servers:
+          - host: "localhost"
+            port: 5984
+            username: ""
+            password: ""
+            displayName: "localhost"
+
+         - host: "host"
+            port: 5985
+            username: ""
+            password: ""
+            displayName: "host"
+
+        #prefix used to show up metrics in AppDynamics
+        metricPrefix:  "Custom Metrics|CouchDB|"
+
+   ```
+   
+2. Configure the path to the config.yml file by editing the <task-arguments> in the monitor.xml file in the `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/` directory. Below is the sample
+
+     ```
+     <task-arguments>
+         <!-- config file-->
+         <argument name="config-file" is-required="true" default-value="monitors/CouchDBMonitor/config.yml" />
+          ....
+     </task-arguments>
+    ```
+
+Note : By default, a Machine agent or a AppServer agent can send a fixed number of metrics to the controller. To change this limit, please follow the instructions mentioned [here](http://docs.appdynamics.com/display/PRO14S/Metrics+Limits).
+For eg.  
+```    
+    java -Dappdynamics.agent.maxMetrics=2500 -jar machineagent.jar
+```
 
 ## Directory Structure
 
 | Directory/File | Description |
 |----------------|-------------|
-|src/main/resources/conf            | Contains the monitor.xml file|
+|src/main/resources/conf            | Contains the monitor.xml file and config.yml|
 |src/main/java             | Contains source code of the CouchDB monitoring extension |
 |target            | Only obtained when using maven. Run 'mvn clean install' to get the distributable .zip file |
 |pom.xml       | Maven build script to package the project (required only if changing Java code) |

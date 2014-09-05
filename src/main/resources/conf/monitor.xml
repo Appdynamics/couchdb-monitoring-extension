@@ -16,7 +16,7 @@
                         <impl-class>com.appdynamics.extensions.couchdb.CouchDBMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <argument name="hosts-config-path" is-required="true" default-value="monitors/CouchDBMonitor/HostsConfig.xml"/>
+                    <argument name="config-file" is-required="true" default-value="monitors/CouchDBMonitor/config.yml"/>
                 </task-arguments>
         </monitor-run-task>
 </monitor>

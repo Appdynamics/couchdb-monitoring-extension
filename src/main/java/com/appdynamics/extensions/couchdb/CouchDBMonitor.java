@@ -15,12 +15,25 @@
  */
 package com.appdynamics.extensions.couchdb;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.appdynamics.TaskInputArgs;
+import com.appdynamics.extensions.PathResolver;
+import com.appdynamics.extensions.couchdb.api.CouchDBMetric;
+import com.appdynamics.extensions.couchdb.api.MetricAggregationType;
+import com.appdynamics.extensions.couchdb.config.ConfigUtil;
+import com.appdynamics.extensions.couchdb.config.Configuration;
+import com.appdynamics.extensions.couchdb.config.Server;
 import com.appdynamics.extensions.http.SimpleHttpClient;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
 import com.singularity.ee.agent.systemagent.api.MetricWriter;
@@ -30,34 +43,16 @@ import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException
 
 public class CouchDBMonitor extends AManagedMonitor {
 
-	private static final String METRICS_SEPARATOR = "|";
-	private static final String METRIC_PREFIX = "Custom Metrics|CouchDB|HostId|";
-	private Set<HostConfig> hostConfigs;
-	private boolean isInitialized = false;
-	private Map<String, Map<String, Map<String, Number>>> cachedValues;
-
 	private static final Logger logger = Logger.getLogger("com.singularity.extensions.CouchDBMonitor");
+	private static final String METRICS_SEPARATOR = "|";
+	public static final String CONFIG_ARG = "config-file";
+	// To load the config files
+	private final static ConfigUtil<Configuration> configUtil = new ConfigUtil<Configuration>();
 
 	public CouchDBMonitor() {
 		String msg = "Using Monitor Version [" + getImplementationVersion() + "]";
 		logger.info(msg);
 		System.out.println(msg);
-	}
-
-	/**
-	 * Initializes the host configurations
-	 * 
-	 * @param taskArguments
-	 *            Map of task arguments.
-	 */
-	private void initialize(Map<String, String> taskArguments) throws Exception {
-		if (!isInitialized) {
-			logger.info("Reading hosts' configuration...");
-			ConfigurationParser configurationParser = new ConfigurationParser(taskArguments.get("hosts-config-path"));
-			hostConfigs = configurationParser.parseHostConfig();
-			cachedValues = Maps.newHashMap();
-			isInitialized = true;
-		}
 	}
 
 	/**
@@ -68,35 +63,45 @@ public class CouchDBMonitor extends AManagedMonitor {
 	 *      com.singularity.ee.agent.systemagent.api.TaskExecutionContext)
 	 */
 	public TaskOutput execute(Map<String, String> taskArguments, TaskExecutionContext taskExecutionContext) throws TaskExecutionException {
-		try {
-			initialize(taskArguments);
-			logger.info("Executing CouchDBMonitor...");
-			for (HostConfig hostConfig : hostConfigs) {
-				String host = hostConfig.hostId;
-				Map<String, String> httpClientArguments = buildHttpClientArguments(hostConfig);
-				SimpleHttpClient httpClient = SimpleHttpClient.builder(httpClientArguments).build();
-
-				CouchDBWrapper couchDBWrapper = new CouchDBWrapper();
-				Map<String, Map<String, Number>> metrics = couchDBWrapper.gatherMetrics(httpClient);
-				Map<String, Map<String, Number>> hostCachedMetrics = cachedValues.get(host);
-				Map<String, Map<String, Number>> currentMetrics = couchDBWrapper.calculateCurrentMetrics(hostCachedMetrics, metrics);
-				printMetrics(host, currentMetrics);
-				cachedValues.put(host, metrics);
-				logger.info("Gathered and Printed metrics successfully for " + host);
+		if (taskArguments != null) {
+			logger.info("Starting the CouchDB Monitoring Task");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Task Arguments Passed ::" + taskArguments);
 			}
-			return new TaskOutput("Task successful...");
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			// initialize(taskArguments);
+			String configFilename = getConfigFilename(taskArguments.get(CONFIG_ARG));
+			try {
+				// read the config.
+				Configuration config = configUtil.readConfig(configFilename, Configuration.class);
+				if (config != null && config.getServers() != null) {
+					for (Server hostConfig : config.getServers()) {
+						Map<String, String> httpClientArguments = buildHttpClientArguments(hostConfig);
+						SimpleHttpClient httpClient = SimpleHttpClient.builder(httpClientArguments).build();
+
+						CouchDBWrapper couchDBWrapper = new CouchDBWrapper();
+						List<CouchDBMetric> metrics = couchDBWrapper.gatherMetrics(httpClient);
+						printMetrics(config, hostConfig, metrics);
+						logger.info("Gathered and Printed metrics successfully for " + hostConfig.getDisplayName());
+					}
+					logger.info("CouchDB Monitoring task completed successfully.");
+					return new TaskOutput("CouchDB Monitoring task completed successfully.");
+				}
+			} catch (FileNotFoundException e) {
+				logger.error("Config file not found :: " + configFilename, e);
+			} catch (Exception e) {
+				logger.error("Metrics collection failed", e);
+			}
 		}
-		return new TaskOutput("Task failed with errors");
+		logger.info("CouchDB monitoring task completed with failures.");
+		throw new TaskExecutionException("CouchDB monitoring task completed with failures.");
 	}
 
-	private Map<String, String> buildHttpClientArguments(HostConfig hostConfig) {
+	private Map<String, String> buildHttpClientArguments(Server hostConfig) {
 		Map<String, String> taskArguments = Maps.newHashMap();
-		taskArguments.put("host", hostConfig.hostId);
-		taskArguments.put("port", hostConfig.port);
-		taskArguments.put("username", hostConfig.username);
-		taskArguments.put("password", hostConfig.password);
+		taskArguments.put(TaskInputArgs.HOST, hostConfig.getHost());
+		taskArguments.put(TaskInputArgs.PORT, String.valueOf(hostConfig.getPort()));
+		taskArguments.put(TaskInputArgs.USER, hostConfig.getUsername());
+		taskArguments.put(TaskInputArgs.PASSWORD, hostConfig.getPassword());
 
 		return taskArguments;
 	}
@@ -104,21 +109,23 @@ public class CouchDBMonitor extends AManagedMonitor {
 	/**
 	 * Writes the couchDB metrics to the controller
 	 * 
-	 * @param hostId
+	 * @param config
 	 *            Name of the CouchDB host
-	 * @param metricsMap
+	 * @param hostConfig
+	 * @param metrics
 	 *            HashMap containing all the couchDB metrics
 	 */
-	private void printMetrics(String hostId, Map<String, Map<String, Number>> metricsMap) throws Exception {
-		for (Map.Entry<String, Map<String, Number>> entry : metricsMap.entrySet()) {
-			String metricCategory = entry.getKey();
-			Map<String, Number> metricCategoryStats = entry.getValue();
-			for (Map.Entry<String, Number> metric : metricCategoryStats.entrySet()) {
-				String metricName = metric.getKey();
-				Number metricValue = metric.getValue();
-				printMetric(hostId + METRICS_SEPARATOR + metricCategory + METRICS_SEPARATOR + metricName, metricValue,
-						MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION, MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE,
-						MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+	private void printMetrics(Configuration config, Server hostConfig, List<CouchDBMetric> metrics) throws Exception {
+		String metricPrefix = config.getMetricPrefix();
+		for (CouchDBMetric metric : metrics) {
+			String metricCategory = metric.getMetricCategory();
+			String metricName = metric.getMetricName();
+			Map<MetricAggregationType, BigDecimal> metricStats = metric.getValues();
+			for (Entry<MetricAggregationType, BigDecimal> typedValues : metricStats.entrySet()) {
+				String aggregationType = typedValues.getKey().getAggregationType();
+				BigDecimal metricValue = typedValues.getValue();
+				printMetric(metricPrefix + hostConfig.getDisplayName() + METRICS_SEPARATOR + metricCategory + METRICS_SEPARATOR + metricName
+						+ METRICS_SEPARATOR + aggregationType, metricValue);
 			}
 		}
 	}
@@ -127,23 +134,40 @@ public class CouchDBMonitor extends AManagedMonitor {
 	 * Returns the metric to the AppDynamics Controller.
 	 * 
 	 * @param metricName
-	 *            Name of the Metric
 	 * @param metricValue
-	 *            Value of the Metric
-	 * @param aggregation
-	 *            Average OR Observation OR Sum
-	 * @param timeRollup
-	 *            Average OR Current OR Sum
-	 * @param cluster
-	 *            Collective OR Individual
+	 * @throws Exception
 	 */
-	private void printMetric(String metricName, Number metricValue, String aggregation, String timeRollup, String cluster) throws Exception {
+	private void printMetric(String metricName, BigDecimal metricValue) throws Exception {
 		if (metricValue != null) {
-			MetricWriter metricWriter = super.getMetricWriter(METRIC_PREFIX + metricName, aggregation, timeRollup, cluster);
-			String value = String.valueOf((long) metricValue.doubleValue());
+			MetricWriter metricWriter = super.getMetricWriter(metricName, MetricWriter.METRIC_AGGREGATION_TYPE_OBSERVATION,
+					MetricWriter.METRIC_TIME_ROLLUP_TYPE_AVERAGE, MetricWriter.METRIC_CLUSTER_ROLLUP_TYPE_INDIVIDUAL);
+			String value = metricValue.setScale(0, RoundingMode.HALF_UP).toString();
 			metricWriter.printMetric(value);
-			logger.debug("METRIC_PREFIX + metricName : " + value);
+			logger.debug(metricName + " : " + value);
 		}
+	}
+
+	/**
+	 * Returns a config file name,
+	 * 
+	 * @param filename
+	 * @return String
+	 */
+	private String getConfigFilename(String filename) {
+		if (filename == null) {
+			return "";
+		}
+		// for absolute paths
+		if (new File(filename).exists()) {
+			return filename;
+		}
+		// for relative paths
+		File jarPath = PathResolver.resolveDirectory(AManagedMonitor.class);
+		String configFileName = "";
+		if (!Strings.isNullOrEmpty(filename)) {
+			configFileName = jarPath + File.separator + filename;
+		}
+		return configFileName;
 	}
 
 	private static String getImplementationVersion() {
