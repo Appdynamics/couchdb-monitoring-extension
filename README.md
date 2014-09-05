@@ -9,7 +9,7 @@ Apache CouchDB, commonly referred to as CouchDB, is an open source database that
 
 ## Installation ##
 
-1. Run "mvn clean install" and find the CouchDBMonitor.zip file in the "target" folder. You can also download the CouchDBMonitor.zip from [AppDynamics Exchange][http://community.appdynamics.com/t5/eXchange-Community-AppDynamics/CouchDB-Monitoring-Extension/idi-p/5537].
+1. Run "mvn clean install" and find the CouchDBMonitor.zip file in the "target" folder. You can also download the CouchDBMonitor.zip from [AppDynamics Exchange](http://community.appdynamics.com/t5/eXchange-Community-AppDynamics/CouchDB-Monitoring-Extension/idi-p/5537).
 2. Unzip as "CouchDBMonitor" and copy the "CouchDBMonitor" directory to `<MACHINE_AGENT_HOME>/monitors`
 
 ## Configuration ##
