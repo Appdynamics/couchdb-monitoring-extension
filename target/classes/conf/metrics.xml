@@ -1,0 +1,6 @@
+<stats>
+    <stat type="database" url = "/_stats/couchdb">
+            <metric attr="auth_cache_hits" alias="Number of Cache Hits" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+            <metric attr="auth_cache_misses" alias="Number of Cache Misses" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+    </stat>
+</stats>
