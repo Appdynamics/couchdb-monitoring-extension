@@ -23,7 +23,8 @@
                         <impl-class>com.appdynamics.extensions.couchdb.CouchDBMonitor</impl-class>
                 </java-task>
                 <task-arguments>
-                    <argument name="config-file" is-required="true" default-value="monitors/CouchDBMonitor/config.yml"/>
+                        <argument name="config-file" is-required="true" default-value="monitors/CouchDBMonitor/config.yml"/>
+                        <argument name="metrics-file" is-required="true" default-value="monitors/CouchDBMonitor/metrics.xml" />
                 </task-arguments>
         </monitor-run-task>
 </monitor>
