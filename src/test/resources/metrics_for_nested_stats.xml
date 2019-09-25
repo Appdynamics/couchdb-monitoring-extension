@@ -1,0 +1,34 @@
+<stats>
+    <stat type="couchdb" url = "/_stats/couchdb">
+        <metric attr="auth_cache_hits" alias="Number of Cache Hits" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+        <metric attr="auth_cache_misses" alias="Number of Cache Misses" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+
+    <stat type="dbinfo" url = "/_stats/couchdb/dbinfo">
+        <stat type="value" url = "/_stats/couchdb/dbinfo">
+            <metric attr="arithmetic_mean" alias="Avg DB Info Calls" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+        </stat>
+    </stat>
+
+    <stat type="request_time" url = "/_stats/couchdb/request_time">
+        <stat type="value" url = "/_stats/couchdb/request_time/value">
+            <metric attr="arithmetic_mean" alias="Avg Request Time" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+        </stat>
+    </stat>
+
+    <stat type="query_server" url = "/_stats/couchdb/query_server">
+        <metric attr="vdu_rejects" alias="validate doc update Rejects" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+        <stat type="vdu_process_time" url = "/_stats/couchdb/couch_server/vdu_process_time">
+            <stat type="value" url = "/_stats/couchdb/couch_server/vdu_process_time">
+                <metric attr="arithmetic_mean" alias="validate doc update duration" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+            </stat>
+        </stat>
+    </stat>
+
+    <stat type="mrview" url = "/_stats/couchdb/mrview">
+            <metric attr="map_doc" alias="View Server Doc Count" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+            <metric attr="emits" alias="Emit Count" aggregationType = "OBSERVATION" timeRollUpType = "CURRENT" clusterRollUpType = "INDIVIDUAL"/>
+    </stat>
+
+    </stat>
+
+</stats>

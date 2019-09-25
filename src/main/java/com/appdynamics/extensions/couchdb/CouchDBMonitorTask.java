@@ -3,15 +3,19 @@ package com.appdynamics.extensions.couchdb;
 import com.appdynamics.extensions.AMonitorTaskRunnable;
 import com.appdynamics.extensions.MetricWriteHelper;
 import com.appdynamics.extensions.conf.MonitorContextConfiguration;
+import com.appdynamics.extensions.couchdb.metrics.NodeMetricsCollectorTask;
+import com.appdynamics.extensions.couchdb.util.Constants;
 import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.http.UrlBuilder;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
+import com.appdynamics.extensions.metrics.Metric;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      private MetricWriteHelper metricWriteHelper;
      private MonitorContextConfiguration configuration;
      private Map<String, ?> server;
-     Phaser phaser;
+     private Phaser phaser;
 
      CouchDBMonitorTask(MetricWriteHelper metricWriteHelper, MonitorContextConfiguration configuration, Map<String,?> server) {
          this.configuration = configuration;
@@ -54,23 +58,53 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     private void fetchMetrics(List<String> nodes) {
+        try {
+            JsonNode clusterNodes = getClusterNodes();
+            for(String node : nodes) {
+                for (JsonNode clusterNode : clusterNodes) {
+                    if (clusterNode.getTextValue().matches(node)) {
+                        LOGGER.debug("Wildcard match for node - {}", clusterNode.getTextValue() );
+                        LOGGER.debug("Processing node {}",clusterNode.getTextValue() );
+                        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, metricWriteHelper, server.get(Constants.URI).toString(), server.get(Constants.DISPLAY_NAME).toString(), clusterNode.getTextValue(), phaser);
+                        Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
+                        metricWriteHelper.transformAndPrintMetrics(metricsList.get());
+                    }
+                }
+            }
+        }catch (Exception e){
+            LOGGER.info("no nodes in cluster {}", server.get(Constants.DISPLAY_NAME).toString(), e);
+        }
     }
 
     private void fetchMetricsFromAllNodes() {
         try {
-           for(JsonNode clusterNode : getAllClusterNodes()){
-               NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, metricWriteHelper, server.get(Constants.URI).toString(),clusterNode.getTextValue(), phaser);
-               configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
+            JsonNode clusterNodes = getClusterNodes();
+            for(JsonNode clusterNode : clusterNodes){
+               NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(
+                                                                    configuration,
+                                                                   metricWriteHelper,
+                                                                   server.get(Constants.URI).toString(),
+                                                                   server.get(Constants.DISPLAY_NAME).toString(),
+                                                                   clusterNode.getTextValue(), phaser);
+                Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
+                metricWriteHelper.transformAndPrintMetrics(metricsList.get());
            }
         } catch (Exception e) {
             LOGGER.info("no nodes in cluster {}", server.get(Constants.DISPLAY_NAME).toString(), e);
         }
     }
 
-    private JsonNode getAllClusterNodes() throws Exception {
+    private JsonNode getClusterNodes() throws Exception {
         ObjectNode allNodes = HttpClientUtils.getResponseAsJson(configuration.getContext().getHttpClient(), server.get("uri").toString()+"/_membership", ObjectNode.class);
         if(allNodes != null && allNodes.size() > 0){
-            return allNodes.get("cluster_nodes");
+            JsonNode clusterNodes = allNodes.get("cluster_nodes");
+            if(clusterNodes != null && clusterNodes.size() > 0 ){
+                return clusterNodes;
+            }
+            else{
+                LOGGER.info("No nodes found in cluster_nodes");
+                throw new Exception ("No nodes found in cluster_nodes");
+            }
         }
         else{
             throw new Exception("no nodes available");

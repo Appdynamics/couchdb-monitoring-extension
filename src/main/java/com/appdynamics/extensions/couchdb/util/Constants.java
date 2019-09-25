@@ -1,4 +1,4 @@
-package com.appdynamics.extensions.couchdb;
+package com.appdynamics.extensions.couchdb.util;
 
 /**
  * @author: Vishaka Sekar on 2019-09-16
@@ -12,9 +12,6 @@ public class Constants {
     public static final String STR = "str";
     public static final String VALUE = "value";
     public static final String METRIC = "metric";
-    public static final String STATS_URL = "statsUrl";
-    public static final String NAME = "name";
-    public static final String ID = "id";
     public static final String URL = "url";
     public static final String STAT = "stat";
 }

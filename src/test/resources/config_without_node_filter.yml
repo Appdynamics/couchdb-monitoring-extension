@@ -13,22 +13,23 @@ servers:
     password: 'admin'
     encryptedPassword: ''
     useSSL: 'false'
-    displayName: 'myCluster'
+    displayName: 'MultiNodeCluster'
 
-# more servers go here
-  - uri: 'https://localhost:6984'
-    username: 'admin'
-    password: 'admin'
+## more servers go here
+
+  - uri: 'https://localhost:9449'
+    username: 'test@appdynamics.com'
+    password: 'test@123'
     encryptedPassword: ''
-    useSSL: 'true'
-    displayName: 'testCluster'
+    useSSL: 'false'
+    displayName: 'SingleNodeCluster'
 
 
-nodes: [".*localhost.*"]
+nodes: []
 
 connection:
-  socketTimeout: 5000 # Read Timeout
-  connectTimeout: 5000 # Connection Timeout
+  #  socketTimeout: 5000 # Read Timeout
+  #  connectTimeout: 5000 # Connection Timeout
 
   sslCertCheckEnabled: true #
   sslCipherSuites: [] # Defaults to "default".
@@ -36,7 +37,7 @@ connection:
   sslProtocols: [] # If null, by default TLSv1, TLSv1.1, TLSv1.2 are supported.
 
   #Converting PEM to JKS https://docs.oracle.com/cd/E35976_01/server.740/es_admin/src/tadm_ssl_convert_pem_to_jks.html
-  sslTrustStorePath: "" # If not set, will set value from "-Dappdynamics.agent.monitors.truststore.path=/path/cacerts" if present, else will set value as <MachineAgentHome>/conf/extensions-cacerts.jks.
+  sslTrustStorePath: "/path/to/truststore.jks" # If not set, will set value from "-Dappdynamics.agent.monitors.truststore.path=/path/cacerts" if present, else will set value as <MachineAgentHome>/conf/extensions-cacerts.jks.
   sslTrustStorePassword: "changeit" # If not set, will set value from "-Dappdynamics.agent.monitors.truststore.password".
   sslTrustStoreEncryptedPassword: "" ## If not set, will set value from "-Dappdynamics.agent.monitors.truststore.encryptedPassword".
 
@@ -48,8 +49,8 @@ proxy:
 
 encryptionKey: "myKey"
 
-# numberOfThreads = number of servers
-numberOfThreads: 2
+# numberOfThreads = 1 for each server + 1 for each object
+numberOfThreads: 20
 
 metricPathReplacements:
   - replace: "_"

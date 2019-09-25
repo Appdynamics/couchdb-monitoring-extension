@@ -1,5 +1,5 @@
 package com.appdynamics.extensions.couchdb.config;
-import com.appdynamics.extensions.couchdb.Constants;
+import com.appdynamics.extensions.couchdb.util.Constants;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

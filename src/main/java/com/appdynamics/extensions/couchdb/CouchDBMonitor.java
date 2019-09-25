@@ -18,6 +18,7 @@ package com.appdynamics.extensions.couchdb;
 import com.appdynamics.extensions.ABaseMonitor;
 import com.appdynamics.extensions.TasksExecutionServiceProvider;
 import com.appdynamics.extensions.couchdb.config.Stats;
+import com.appdynamics.extensions.couchdb.util.Constants;
 import com.appdynamics.extensions.util.AssertUtils;
 import com.google.common.collect.Maps;
 import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
@@ -53,7 +54,6 @@ public class CouchDBMonitor extends ABaseMonitor {
     @Override
     protected void doRun(TasksExecutionServiceProvider tasksExecutionServiceProvider) {
         List<Map<String, ?>> servers =  getServers();
-
         for (Map<String, ?> server : servers) {
             CouchDBMonitorTask task = new CouchDBMonitorTask(tasksExecutionServiceProvider.getMetricWriteHelper(), this.getContextConfiguration(),server);
             AssertUtils.assertNotNull(server.get(Constants.DISPLAY_NAME), "The displayName can not be null");
