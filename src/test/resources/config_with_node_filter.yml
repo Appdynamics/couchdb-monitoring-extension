@@ -1,5 +1,5 @@
 #This will create this metric in all the tiers, under this path
-metricPrefix: Custom Metrics|CouchDB|
+metricPrefix: Custom Metrics|Couch DB|
 
 #This will create it in specific Tier/Component.
 #Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.

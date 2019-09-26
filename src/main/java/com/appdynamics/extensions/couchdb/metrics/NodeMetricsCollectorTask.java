@@ -7,6 +7,7 @@ import com.appdynamics.extensions.couchdb.config.Stats;
 import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
 import com.appdynamics.extensions.metrics.Metric;
+import com.appdynamics.extensions.util.JsonUtils;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
 
@@ -43,11 +44,11 @@ public class NodeMetricsCollectorTask implements Callable<List<Metric>> {
         Stats stats = (Stats) configuration.getMetricsXml();
         Stat[] statArray = stats.getStat();
         List<Metric> metricsList = new ArrayList<>();
+        JsonNode jsonNode = HttpClientUtils.getResponseAsJson(configuration.getContext().getHttpClient(), uri + "/_node/" + nodeName + "/_stats", JsonNode.class);
+        if(jsonNode != null) {
         for (Stat statistic : statArray) {
-            JsonNode jsonNode = HttpClientUtils.getResponseAsJson(configuration.getContext().getHttpClient(), uri+"/_node/"+nodeName + statistic.getUrl(), JsonNode.class);
-            if(jsonNode != null) {
                 ParseApiResponse parser = new ParseApiResponse(configuration.getMetricPrefix() + "|" + clusterName + "|" + nodeName + "|" + statistic.getType() + "|");
-                metricsList = parser.extractMetricsFromApiResponse(statistic, jsonNode);
+                metricsList.addAll(parser.extractMetricsFromApiResponse(statistic, JsonUtils.getNestedObject(jsonNode, statistic.getType())));
             }
         }
         phaser.arriveAndDeregister();

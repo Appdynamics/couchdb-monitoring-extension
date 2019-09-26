@@ -24,7 +24,7 @@ servers:
     displayName: 'testCluster'
 
 
-nodes: [".*localhost.*"]
+nodes: [".*"]
 
 connection:
   socketTimeout: 5000 # Read Timeout

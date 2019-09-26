@@ -10,6 +10,7 @@ import com.appdynamics.extensions.couchdb.metrics.NodeMetricsCollectorTask;
 import com.appdynamics.extensions.executorservice.MonitorExecutorService;
 import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
+import com.appdynamics.extensions.metrics.Metric;
 import com.appdynamics.extensions.metrics.MetricCharSequenceReplacer;
 import com.appdynamics.extensions.util.MetricPathUtils;
 import com.appdynamics.extensions.util.PathResolver;
@@ -21,7 +22,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -39,8 +39,6 @@ import java.util.concurrent.Phaser;
 
 import static com.appdynamics.extensions.http.HttpClientUtils.getResponseAsStr;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -95,7 +93,6 @@ public class NodeMetricsCollectorTaskTest {
                         return objectNode;
                     }
                 });
-
         File file = new File("src/test/resources/multinode_membership_response.json");
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -108,19 +105,12 @@ public class NodeMetricsCollectorTaskTest {
     }
 
     @Test
-    public void whenNoNodeFilterThenCollectMetrics() {
-        contextConfiguration.setConfigYml("src/test/resources/config_without_node_filter.yml");
-        conf = contextConfiguration.getConfigYml();
-        List<Map<String, ?>> servers = (List<Map<String, ?>>) conf.get("servers");
-        for (Map<String, ?> server : servers) {
-            for(JsonNode node : clusterNodes ){
-                NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(contextConfiguration, metricWriteHelper,
-                        server.get("uri").toString(), server.get("displayName").toString(), node.getTextValue(), phaser) ;
-                nodeMetricsCollectorTask.call();
-            }
-        }
-        ArgumentCaptor<List> pathCaptorList = ArgumentCaptor.forClass(List.class);
-        verify(metricWriteHelper, times(4)).transformAndPrintMetrics(pathCaptorList.capture());
-        System.out.println(pathCaptorList.getAllValues()); //todo: assert
+    public void collectNodeMetrics() {
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
+        contextConfiguration.setConfigYml("src/test/resources/config.yml");
+        phaser.register();
+        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(contextConfiguration, metricWriteHelper,
+                "localhost:5984", "displayName", "couchdb@localhost", phaser) ;
+        List<Metric> metricList = nodeMetricsCollectorTask.call(); //todo:assert
     }
 }

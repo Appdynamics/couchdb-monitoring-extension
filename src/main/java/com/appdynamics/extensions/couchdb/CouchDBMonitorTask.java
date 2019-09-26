@@ -45,10 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         if (heartBeat.get() == 1) {
             LOGGER.info("Connected to {}", server.get(Constants.DISPLAY_NAME).toString() );
             List<String> nodes = (List<String>) config.get("nodes");
-            if(nodes == null || nodes.isEmpty()){
-                fetchMetricsFromAllNodes();
-            }
-            else{
+            if(nodes.size() > 0) {
                 fetchMetrics(nodes);
             }
         }else{
@@ -60,11 +57,11 @@ import java.util.concurrent.atomic.AtomicInteger;
     private void fetchMetrics(List<String> nodes) {
         try {
             JsonNode clusterNodes = getClusterNodes();
-            for(String node : nodes) {
+            for (String node : nodes) {
                 for (JsonNode clusterNode : clusterNodes) {
                     if (clusterNode.getTextValue().matches(node)) {
-                        LOGGER.debug("Wildcard match for node - {}", clusterNode.getTextValue() );
-                        LOGGER.debug("Processing node {}",clusterNode.getTextValue() );
+                        LOGGER.debug("Wildcard match for node - {}", clusterNode.getTextValue());
+                        LOGGER.debug("Processing node {}", clusterNode.getTextValue());
                         NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, metricWriteHelper, server.get(Constants.URI).toString(), server.get(Constants.DISPLAY_NAME).toString(), clusterNode.getTextValue(), phaser);
                         Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
                         metricWriteHelper.transformAndPrintMetrics(metricsList.get());
@@ -72,24 +69,6 @@ import java.util.concurrent.atomic.AtomicInteger;
                 }
             }
         }catch (Exception e){
-            LOGGER.info("no nodes in cluster {}", server.get(Constants.DISPLAY_NAME).toString(), e);
-        }
-    }
-
-    private void fetchMetricsFromAllNodes() {
-        try {
-            JsonNode clusterNodes = getClusterNodes();
-            for(JsonNode clusterNode : clusterNodes){
-               NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(
-                                                                    configuration,
-                                                                   metricWriteHelper,
-                                                                   server.get(Constants.URI).toString(),
-                                                                   server.get(Constants.DISPLAY_NAME).toString(),
-                                                                   clusterNode.getTextValue(), phaser);
-                Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
-                metricWriteHelper.transformAndPrintMetrics(metricsList.get());
-           }
-        } catch (Exception e) {
             LOGGER.info("no nodes in cluster {}", server.get(Constants.DISPLAY_NAME).toString(), e);
         }
     }

@@ -85,44 +85,81 @@ public class CouchDBMonitorTaskTest {
     @Test
     public void whenServerUpThenHeartBeatReturns1(){
 
-        conf = YmlReader.readFromFileAsMap(new File("src/test/resources/config.yml"));
-        List<Map<String , ?>> servers = (List<Map<String, ?>>) conf.get("servers");
+        MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
+        contextConfiguration.setConfigYml("src/test/resources/config.yml");
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
+        List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
         for(Map<String, ?> server : servers) {
-            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, configuration,server);
+            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, contextConfiguration,server);
             PowerMockito.mockStatic(HttpClientUtils.class);
             PowerMockito.mockStatic(CloseableHttpClient.class);
             PowerMockito.when(getResponseAsStr(any(CloseableHttpClient.class), anyString())).thenReturn("");
             task.run();
-            verify(metricWriteHelper).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
-            List objectMetricList = pathCaptor.getAllValues();
-            Assert.assertTrue(objectMetricList.get(0).toString().equals("Custom Metrics|Couch DB|myCluster|Connection Status"));
-            Assert.assertTrue(objectMetricList.get(1).toString().equals("1"));
         }
+        verify(metricWriteHelper, times(2)).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
+        List objectMetricList = pathCaptor.getAllValues();
+        Assert.assertTrue(objectMetricList.get(0).toString().equals("Custom Metrics|Couch DB|myCluster|Connection Status"));
+        Assert.assertTrue(objectMetricList.get(1).toString().equals("1"));
     }
 
     @Test
-    public void whenServerUpThenHeartBeatReturns0() {
+    public void whenServerNotUpThenHeartBeatReturns0() {
 
-        conf = YmlReader.readFromFileAsMap(new File("src/test/resources/config.yml"));
-        List<Map<String, ?>> servers = (List<Map<String, ?>>) conf.get("servers");
+        MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
+        contextConfiguration.setConfigYml("src/test/resources/config.yml");
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
+        List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
         for (Map<String, ?> server : servers) {
-            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, configuration, server);
+            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, contextConfiguration, server);
             PowerMockito.mockStatic(HttpClientUtils.class);
             PowerMockito.mockStatic(CloseableHttpClient.class);
             PowerMockito.when(getResponseAsStr(any(CloseableHttpClient.class), anyString())).thenReturn(null);
             task.run();
-            verify(metricWriteHelper).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
-            List objectMetricList = pathCaptor.getAllValues();
-            Assert.assertTrue(objectMetricList.get(0).toString().equals("Custom Metrics|Couch DB|myCluster|Connection Status"));
-            Assert.assertTrue(objectMetricList.get(1).toString().equals("0"));
         }
+        verify(metricWriteHelper, times(2)).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
+        List objectMetricList = pathCaptor.getAllValues();
+        Assert.assertTrue(objectMetricList.get(0).toString().equals("Custom Metrics|Couch DB|myCluster|Connection Status"));
+        Assert.assertTrue(objectMetricList.get(1).toString().equals("0"));
     }
 
     @Test
-    public void whenNoNodeFilterThenCollectMetrics() {
+    public void whenNoNodeFilterSpecifiedThenShouldNotCollectMetrics() {
         MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
         contextConfiguration.setConfigYml("src/test/resources/config_without_node_filter.yml");
-        contextConfiguration.setMetricXml("src/test/resources/metrics_for_nested_stats.xml", Stats.class);
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
+        List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
+        PowerMockito.mockStatic(HttpClientUtils.class);
+        PowerMockito.mockStatic(CloseableHttpClient.class);
+        PowerMockito.when(getResponseAsStr(any(CloseableHttpClient.class), anyString())).thenReturn("200 ok");
+        when(HttpClientUtils.getResponseAsJson(any(CloseableHttpClient.class), anyString(), any(Class.class))).thenAnswer(
+                new Answer() {
+                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        ObjectMapper mapper = new ObjectMapper();
+                        String url = (String) invocationOnMock.getArguments()[1];
+                        File file = null;
+                        if(url.contains("_node")) {
+                            file = new File("src/test/resources/stats_api_response.json");
+                        }
+                        if(url.contains("_membership")){
+                            file = new File("src/test/resources/multinode_membership_response.json");
+                        }
+                        JsonNode objectNode = mapper.readValue(file, JsonNode.class);
+                        return objectNode;
+                    }
+                });
+        for (Map<String, ?> server : servers) {
+            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, contextConfiguration, server);
+            task.run();
+        }
+        verify(metricWriteHelper, times(2)).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
+        System.out.println(pathCaptor.getAllValues()); //todo: assert
+    }
+
+    @Test
+    public void whenNodeFilterHasValueThenCollectMetrics() throws InterruptedException {
+        MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
+        contextConfiguration.setConfigYml("src/test/resources/config_with_node_filter.yml");
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
         List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
         PowerMockito.mockStatic(HttpClientUtils.class);
         PowerMockito.mockStatic(CloseableHttpClient.class);
@@ -148,15 +185,16 @@ public class CouchDBMonitorTaskTest {
             task.run();
         }
         ArgumentCaptor<List> pathCaptorList = ArgumentCaptor.forClass(List.class);
-        verify(metricWriteHelper, times(4)).transformAndPrintMetrics(pathCaptorList.capture());
+        Thread.sleep(100);
+        verify(metricWriteHelper, times(2)).transformAndPrintMetrics(pathCaptorList.capture());
         System.out.println(pathCaptorList.getAllValues()); //todo: assert
     }
 
     @Test
-    public void whenNodeFilterThenCollectMetrics() {
+    public void whenNodeFilterHasEmptyStringThenShouldNotCollectMetrics() {
         MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
-        contextConfiguration.setConfigYml("src/test/resources/config_with_node_filter.yml");
-        contextConfiguration.setMetricXml("src/test/resources/metrics_for_nested_stats.xml", Stats.class);
+        contextConfiguration.setConfigYml("src/test/resources/config_with_node_filter_empty_string.yml");
+        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
         List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
         PowerMockito.mockStatic(HttpClientUtils.class);
         PowerMockito.mockStatic(CloseableHttpClient.class);
@@ -182,10 +220,6 @@ public class CouchDBMonitorTaskTest {
             task.run();
         }
         ArgumentCaptor<List> pathCaptorList = ArgumentCaptor.forClass(List.class);
-        verify(metricWriteHelper, times(4)).transformAndPrintMetrics(pathCaptorList.capture());
-        System.out.println(pathCaptorList.getAllValues()); //todo: assert
+        verify(metricWriteHelper, times(0)).transformAndPrintMetrics(pathCaptorList.capture());
     }
-
-
-
 }

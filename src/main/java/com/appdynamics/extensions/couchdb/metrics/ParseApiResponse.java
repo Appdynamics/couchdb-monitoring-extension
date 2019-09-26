@@ -15,18 +15,18 @@ import java.util.Map;
 /**
  * @author: Vishaka Sekar on 7/26/19
  */
-class ParseApiResponse {
+public class ParseApiResponse {
 
     private static final Logger LOGGER = ExtensionsLoggerFactory.getLogger(ParseApiResponse.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
     private String metricPrefix;
     private List<Metric> metricList = Lists.newArrayList();
 
-     ParseApiResponse(String metricPrefix ){
+    public ParseApiResponse(String metricPrefix){
         this.metricPrefix = metricPrefix;
     }
 
-     List<Metric> extractMetricsFromApiResponse (Stat stat, JsonNode jsonNode) {
+    public List<Metric> extractMetricsFromApiResponse (Stat stat, JsonNode jsonNode) {
          String[] metricPathTokens;
          if (stat.getStats() != null) {
              for (Stat childStat : stat.getStats()) {

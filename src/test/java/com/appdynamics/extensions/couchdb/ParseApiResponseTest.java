@@ -5,15 +5,20 @@ import com.appdynamics.extensions.AMonitorJob;
 import com.appdynamics.extensions.MetricWriteHelper;
 import com.appdynamics.extensions.conf.MonitorContext;
 import com.appdynamics.extensions.conf.MonitorContextConfiguration;
+import com.appdynamics.extensions.couchdb.config.Stat;
 import com.appdynamics.extensions.couchdb.config.Stats;
+import com.appdynamics.extensions.couchdb.metrics.ParseApiResponse;
 import com.appdynamics.extensions.executorservice.MonitorExecutorService;
 import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
+import com.appdynamics.extensions.metrics.Metric;
 import com.appdynamics.extensions.metrics.MetricCharSequenceReplacer;
 import com.appdynamics.extensions.util.MetricPathUtils;
 import com.appdynamics.extensions.util.PathResolver;
 import com.appdynamics.extensions.yml.YmlReader;
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +30,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Phaser;
 
@@ -44,7 +51,7 @@ public class ParseApiResponseTest {
     MetricWriteHelper metricWriteHelper;
     Phaser phaser  = new Phaser();
     String metricPrefix =  "Custom Metrics|Couch DB";
-    ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List> pathCaptor = ArgumentCaptor.forClass(List.class);
     Map<String, ?> conf;
     Logger logger;
 
@@ -69,9 +76,19 @@ public class ParseApiResponseTest {
     }
 
     @Test
-    public void testTopLevelMetricCollection(){
+    public void testApiResponseParsingCollection() throws IOException {
         MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
-        contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
+        contextConfiguration.setMetricXml("src/test/resources/metrics_for_nested_stats.xml", Stats.class);
+        File file = null;
+        file = new File("src/test/resources/stats_api_response.json");
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readValue(file, JsonNode.class);
+        Stats stats = (Stats)contextConfiguration.getMetricsXml();
+        Stat[] statArray = stats.getStat();
+        for(Stat stat: statArray){
+            ParseApiResponse parseApiResponse = new ParseApiResponse("Custom Metrics|Couch DB|");
+            List<Metric> metricList = parseApiResponse.extractMetricsFromApiResponse(stat, jsonNode);
+        }
 
     }
 
