@@ -8,5 +8,6 @@
 
 .idea
 dist
+*.DS_Store
 
 target
