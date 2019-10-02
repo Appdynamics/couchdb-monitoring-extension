@@ -8,7 +8,7 @@ metricPrefix: Custom Metrics|CouchDB|
 
 
 servers:
-  - uri: 'http://127.0.0.1:5984'
+  - uri: 'http://couchdb.one:5984'
     username: 'admin' # user should have privilege in CouchDB to view stats and view info
     password: 'admin'
     encryptedPassword: ''
@@ -16,11 +16,11 @@ servers:
     displayName: 'myCluster'
 
 # more servers go here
-  - uri: 'https://localhost:6984'
+  - uri: 'https://couchdb.two:6984'
     username: 'admin'
     password: 'admin'
     encryptedPassword: ''
-    useSSL: 'true'
+    useSSL: 'false'
     displayName: 'testCluster'
 
 
