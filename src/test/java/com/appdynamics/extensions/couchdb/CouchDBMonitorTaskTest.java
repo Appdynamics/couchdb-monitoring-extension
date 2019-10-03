@@ -54,15 +54,15 @@ public class CouchDBMonitorTaskTest {
 
     MonitorContextConfiguration configuration;
     MetricWriteHelper metricWriteHelper;
-    Phaser phaser  = new Phaser();
-    String metricPrefix =  "Custom Metrics|Couch DB";
+    Phaser phaser = new Phaser();
+    String metricPrefix = "Custom Metrics|Couch DB";
     ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
     Map<String, ?> conf;
     Logger logger;
 
 
     @Before
-    public void setUp(){
+    public void setUp() {
         conf = YmlReader.readFromFileAsMap(new File("src/test/resources/config.yml"));
         configuration = mock(MonitorContextConfiguration.class);
         metricWriteHelper = mock(MetricWriteHelper.class);
@@ -76,21 +76,21 @@ public class CouchDBMonitorTaskTest {
         Mockito.when(configuration.getMetricPrefix()).thenReturn(metricPrefix);
         MonitorExecutorService executorService = mock(MonitorExecutorService.class);
         when(configuration.getContext().getExecutorService()).thenReturn(executorService);
-        Mockito.doNothing().when(executorService).execute(anyString(), (Runnable) anyObject());
+        Mockito.doNothing().when(executorService).execute(anyString(), anyObject());
         logger = ExtensionsLoggerFactory.getLogger(CouchDBMonitorTaskTest.class);
         phaser.register();
 
     }
 
     @Test
-    public void whenServerUpThenHeartBeatReturns1(){
+    public void whenServerUpThenHeartBeatReturns1() {
 
         MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
         contextConfiguration.setConfigYml("src/test/resources/config.yml");
         contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
         List<Map<String, ?>> servers = (List<Map<String, ?>>) contextConfiguration.getConfigYml().get("servers");
-        for(Map<String, ?> server : servers) {
-            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, contextConfiguration,server);
+        for (Map<String, ?> server : servers) {
+            CouchDBMonitorTask task = new CouchDBMonitorTask(metricWriteHelper, contextConfiguration, server);
             PowerMockito.mockStatic(HttpClientUtils.class);
             PowerMockito.mockStatic(CloseableHttpClient.class);
             PowerMockito.when(getResponseAsStr(any(CloseableHttpClient.class), anyString())).thenReturn("");
@@ -137,10 +137,10 @@ public class CouchDBMonitorTaskTest {
                         ObjectMapper mapper = new ObjectMapper();
                         String url = (String) invocationOnMock.getArguments()[1];
                         File file = null;
-                        if(url.contains("_node")) {
+                        if (url.contains("_node")) {
                             file = new File("src/test/resources/stats_api_response.json");
                         }
-                        if(url.contains("_membership")){
+                        if (url.contains("_membership")) {
                             file = new File("src/test/resources/multinode_membership_response.json");
                         }
                         JsonNode objectNode = mapper.readValue(file, JsonNode.class);
@@ -170,10 +170,10 @@ public class CouchDBMonitorTaskTest {
                         ObjectMapper mapper = new ObjectMapper();
                         String url = (String) invocationOnMock.getArguments()[1];
                         File file = null;
-                        if(url.contains("_node")) {
+                        if (url.contains("_node")) {
                             file = new File("src/test/resources/stats_api_response.json");
                         }
-                        if(url.contains("_membership")){
+                        if (url.contains("_membership")) {
                             file = new File("src/test/resources/multinode_membership_response.json");
                         }
                         JsonNode objectNode = mapper.readValue(file, JsonNode.class);
@@ -205,10 +205,10 @@ public class CouchDBMonitorTaskTest {
                         ObjectMapper mapper = new ObjectMapper();
                         String url = (String) invocationOnMock.getArguments()[1];
                         File file = null;
-                        if(url.contains("_node")) {
+                        if (url.contains("_node")) {
                             file = new File("src/test/resources/stats_api_response.json");
                         }
-                        if(url.contains("_membership")){
+                        if (url.contains("_membership")) {
                             file = new File("src/test/resources/multinode_membership_response.json");
                         }
                         JsonNode objectNode = mapper.readValue(file, JsonNode.class);

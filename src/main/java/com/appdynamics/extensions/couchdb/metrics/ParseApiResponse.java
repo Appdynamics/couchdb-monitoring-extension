@@ -22,39 +22,38 @@ public class ParseApiResponse {
     private String metricPrefix;
     private List<Metric> metricList = Lists.newArrayList();
 
-    public ParseApiResponse(String metricPrefix){
+    public ParseApiResponse(String metricPrefix) {
         this.metricPrefix = metricPrefix;
     }
 
-    public List<Metric> extractMetricsFromApiResponse (Stat stat, JsonNode jsonNode) {
-         String[] metricPathTokens;
-         if (stat.getStats() != null) {
-             for (Stat childStat : stat.getStats()) {
-                 extractMetricsFromApiResponse(childStat, JsonUtils.getNestedObject(jsonNode, childStat.getType()));
-             }
-         }
-         if (stat.getMetric() != null) {
-             for (com.appdynamics.extensions.couchdb.config.Metric metricFromConfig : stat.getMetric()) {
-                 JsonNode value = JsonUtils.getNestedObject(jsonNode, metricFromConfig.getAttr());
-                 String metricValue;
-                 if(value == null){
-                    LOGGER.debug("{} not found in response",metricFromConfig.getAttr());
-                 }
-                 else {
-                     if (value.has("value")) {
-                         metricValue = value.get("value").toString();
-                     } else {
-                         metricValue = value.toString();
-                     }
-                     LOGGER.info("Processing metric [{}] ", metricFromConfig.getAttr());
-                     metricPathTokens = metricFromConfig.getAttr().split("\\|");
-                     Map<String, String> propertiesMap = objectMapper.convertValue(metricFromConfig, Map.class);
-                     Metric metric = new Metric(metricFromConfig.getAttr(), metricValue, propertiesMap, metricPrefix, metricPathTokens);
-                     metricList.add(metric);
-                 }
-             }
-         }
+    public List<Metric> extractMetricsFromApiResponse(Stat stat, JsonNode jsonNode) {
+        String[] metricPathTokens;
+        if (stat.getStats() != null) {
+            for (Stat childStat : stat.getStats()) {
+                extractMetricsFromApiResponse(childStat, JsonUtils.getNestedObject(jsonNode, childStat.getType()));
+            }
+        }
+        if (stat.getMetric() != null) {
+            for (com.appdynamics.extensions.couchdb.config.Metric metricFromConfig : stat.getMetric()) {
+                JsonNode value = JsonUtils.getNestedObject(jsonNode, metricFromConfig.getAttr());
+                String metricValue;
+                if (value == null) {
+                    LOGGER.debug("{} not found in response", metricFromConfig.getAttr());
+                } else {
+                    if (value.has("value")) {
+                        metricValue = value.get("value").toString();
+                    } else {
+                        metricValue = value.toString();
+                    }
+                    LOGGER.info("Processing metric [{}] ", metricFromConfig.getAttr());
+                    metricPathTokens = metricFromConfig.getAttr().split("\\|");
+                    Map<String, String> propertiesMap = objectMapper.convertValue(metricFromConfig, Map.class);
+                    Metric metric = new Metric(metricFromConfig.getAttr(), metricValue, propertiesMap, metricPrefix, metricPathTokens);
+                    metricList.add(metric);
+                }
+            }
+        }
         return metricList;
-     }
- }
+    }
+}
 

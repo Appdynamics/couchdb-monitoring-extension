@@ -53,14 +53,14 @@ public class NodeMetricsCollectorTaskTest {
 
     MonitorContextConfiguration contextConfiguration;
     MetricWriteHelper metricWriteHelper;
-    Phaser phaser  = new Phaser();
-    String metricPrefix =  "Custom Metrics|Couch DB";
+    Phaser phaser = new Phaser();
+    String metricPrefix = "Custom Metrics|Couch DB";
     Map<String, ?> conf;
     Logger logger;
     JsonNode clusterNodes = null;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         conf = YmlReader.readFromFileAsMap(new File("src/test/resources/config.yml"));
         MonitorContextConfiguration configuration = mock(MonitorContextConfiguration.class);
         contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
@@ -75,7 +75,7 @@ public class NodeMetricsCollectorTaskTest {
         Mockito.when(configuration.getMetricPrefix()).thenReturn(metricPrefix);
         MonitorExecutorService executorService = mock(MonitorExecutorService.class);
         when(configuration.getContext().getExecutorService()).thenReturn(executorService);
-        Mockito.doNothing().when(executorService).execute(anyString(), (Runnable) anyObject());
+        Mockito.doNothing().when(executorService).execute(anyString(), anyObject());
         logger = ExtensionsLoggerFactory.getLogger(CouchDBMonitorTaskTest.class);
         PowerMockito.mockStatic(HttpClientUtils.class);
         PowerMockito.mockStatic(CloseableHttpClient.class);
@@ -86,7 +86,7 @@ public class NodeMetricsCollectorTaskTest {
                         ObjectMapper mapper = new ObjectMapper();
                         String url = (String) invocationOnMock.getArguments()[1];
                         File file = null;
-                        if(url.contains("_node")) {
+                        if (url.contains("_node")) {
                             file = new File("src/test/resources/stats_api_response.json");
                         }
                         JsonNode objectNode = mapper.readValue(file, JsonNode.class);
@@ -97,7 +97,7 @@ public class NodeMetricsCollectorTaskTest {
         try {
             ObjectMapper mapper = new ObjectMapper();
             clusterNodes = mapper.readValue(file, JsonNode.class).get("cluster_nodes");
-        }catch (IOException ioe){
+        } catch (IOException ioe) {
             logger.info("cannot open mock response for membership api ");
         }
         contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
@@ -109,8 +109,8 @@ public class NodeMetricsCollectorTaskTest {
         contextConfiguration.setMetricXml("src/test/resources/metrics.xml", Stats.class);
         contextConfiguration.setConfigYml("src/test/resources/config.yml");
         phaser.register();
-        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(contextConfiguration, metricWriteHelper,
-                "localhost:5984", "displayName", "couchdb@localhost", phaser) ;
+        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(contextConfiguration,
+                "localhost:5984", "displayName", "couchdb@localhost", phaser);
         List<Metric> metricList = nodeMetricsCollectorTask.call(); //todo:assert
     }
 }

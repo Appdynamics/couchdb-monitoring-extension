@@ -18,11 +18,11 @@ public class Stats {
     @XmlElement(name = Constants.STAT)
     private Stat[] stat;
 
-    public Stat[] getStat () {
+    public Stat[] getStat() {
         return stat;
     }
 
-    public void setStat (Stat[] stat) {
+    public void setStat(Stat[] stat) {
         this.stat = stat;
     }
 }
