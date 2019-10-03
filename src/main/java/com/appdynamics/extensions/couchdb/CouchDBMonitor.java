@@ -1,12 +1,12 @@
-/** 
+/**
  * Copyright 2019 AppDynamics
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an AS IS BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,36 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 public class CouchDBMonitor extends ABaseMonitor {
 
-    @Override
-    protected String getDefaultMetricPrefix() {
-        return Constants.DEFAULT_METRIC_PREFIX;
-    }
-
-    @Override
-    public String getMonitorName() {
-        return Constants.COUCHDB_MONITOR;
-    }
-
-    @Override
-    protected void initializeMoreStuff (Map<String, String> args) {
-        this.getContextConfiguration().setMetricXml(args.get("metrics-file"), Stats.class);
-    }
-
-    @Override
-    protected void doRun(TasksExecutionServiceProvider tasksExecutionServiceProvider) {
-        List<Map<String, ?>> servers =  getServers();
-        for (Map<String, ?> server : servers) {
-            CouchDBMonitorTask task = new CouchDBMonitorTask(tasksExecutionServiceProvider.getMetricWriteHelper(), this.getContextConfiguration(),server);
-            AssertUtils.assertNotNull(server.get(Constants.DISPLAY_NAME), "The displayName can not be null");
-            tasksExecutionServiceProvider.submit(server.get(Constants.DISPLAY_NAME).toString(), task);
-        }
-    }
-
-    @Override
-    protected List<Map<String, ?>> getServers() {
-        return (List<Map<String, ?>>) getContextConfiguration().getConfigYml().get(Constants.SERVERS);
-    }
-
     public static void main(String[] args) throws TaskExecutionException, IOException {
 
         ConsoleAppender ca = new ConsoleAppender();
@@ -86,10 +56,39 @@ public class CouchDBMonitor extends ABaseMonitor {
                     monitor.execute(taskArgs, null);
                 } catch (Exception e) {
 
-                    System.out.println("Error while running the task"+ e);
+                    System.out.println("Error while running the task" + e);
                 }
             }
         }, 2, 60, TimeUnit.SECONDS);
+    }
 
+    @Override
+    protected String getDefaultMetricPrefix() {
+        return Constants.DEFAULT_METRIC_PREFIX;
+    }
+
+    @Override
+    public String getMonitorName() {
+        return Constants.COUCHDB_MONITOR;
+    }
+
+    @Override
+    protected void initializeMoreStuff(Map<String, String> args) {
+        this.getContextConfiguration().setMetricXml(args.get("metrics-file"), Stats.class);
+    }
+
+    @Override
+    protected void doRun(TasksExecutionServiceProvider tasksExecutionServiceProvider) {
+        List<Map<String, ?>> servers = getServers();
+        for (Map<String, ?> server : servers) {
+            CouchDBMonitorTask task = new CouchDBMonitorTask(tasksExecutionServiceProvider.getMetricWriteHelper(), this.getContextConfiguration(), server);
+            AssertUtils.assertNotNull(server.get(Constants.DISPLAY_NAME), "The displayName can not be null");
+            tasksExecutionServiceProvider.submit(server.get(Constants.DISPLAY_NAME).toString(), task);
+        }
+    }
+
+    @Override
+    protected List<Map<String, ?>> getServers() {
+        return (List<Map<String, ?>>) getContextConfiguration().getConfigYml().get(Constants.SERVERS);
     }
 }

@@ -15,7 +15,7 @@ servers:
     useSSL: 'false'
     displayName: 'MultiNodeCluster'
 
-## more servers go here
+  ## more servers go here
 
   - uri: 'https://localhost:9449'
     username: 'test@appdynamics.com'

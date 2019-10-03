@@ -1,6 +1,6 @@
 version: '2'
 services:
-  
+
   couchdb.one:
     image: couchdb
     container_name: couchdb.one

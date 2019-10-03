@@ -49,14 +49,14 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 public class ParseApiResponseTest {
     MonitorContextConfiguration configuration;
     MetricWriteHelper metricWriteHelper;
-    Phaser phaser  = new Phaser();
-    String metricPrefix =  "Custom Metrics|Couch DB";
+    Phaser phaser = new Phaser();
+    String metricPrefix = "Custom Metrics|Couch DB";
     ArgumentCaptor<List> pathCaptor = ArgumentCaptor.forClass(List.class);
     Map<String, ?> conf;
     Logger logger;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         conf = YmlReader.readFromFileAsMap(new File("src/test/resources/config.yml"));
         configuration = mock(MonitorContextConfiguration.class);
         metricWriteHelper = mock(MetricWriteHelper.class);
@@ -70,7 +70,7 @@ public class ParseApiResponseTest {
         Mockito.when(configuration.getMetricPrefix()).thenReturn(metricPrefix);
         MonitorExecutorService executorService = mock(MonitorExecutorService.class);
         Mockito.when(configuration.getContext().getExecutorService()).thenReturn(executorService);
-        Mockito.doNothing().when(executorService).execute(anyString(), (Runnable) anyObject());
+        Mockito.doNothing().when(executorService).execute(anyString(), anyObject());
         logger = ExtensionsLoggerFactory.getLogger(CouchDBMonitorTaskTest.class);
         phaser.register();
     }
@@ -83,15 +83,14 @@ public class ParseApiResponseTest {
         file = new File("src/test/resources/stats_api_response.json");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readValue(file, JsonNode.class);
-        Stats stats = (Stats)contextConfiguration.getMetricsXml();
+        Stats stats = (Stats) contextConfiguration.getMetricsXml();
         Stat[] statArray = stats.getStat();
-        for(Stat stat: statArray){
+        for (Stat stat : statArray) {
             ParseApiResponse parseApiResponse = new ParseApiResponse("Custom Metrics|Couch DB|");
             List<Metric> metricList = parseApiResponse.extractMetricsFromApiResponse(stat, jsonNode);
         }
 
     }
-
 
 
 }

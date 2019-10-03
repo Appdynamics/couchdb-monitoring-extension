@@ -14,7 +14,7 @@ servers:
     encryptedPassword: ''
     useSSL: 'false'
     displayName: 'myCluster'
-# more servers go here
+  # more servers go here
   - uri: 'https://localhost:9449'
     username: 'test@appdynamics.com'
     password: 'test@123'

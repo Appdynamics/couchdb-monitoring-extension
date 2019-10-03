@@ -1,4 +1,5 @@
 package com.appdynamics.extensions.couchdb.config;
+
 import com.appdynamics.extensions.couchdb.util.Constants;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,17 +13,14 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Stat {
 
-    @XmlAttribute
-    private String type;
-
-    @XmlElement(name = Constants.METRIC)
-    private Metric[] metric;
-
-    @XmlAttribute(name = Constants.URL)
-    private String url;
-
     @XmlElement(name = "stat")
     public Stat[] stats;
+    @XmlAttribute
+    private String type;
+    @XmlElement(name = Constants.METRIC)
+    private Metric[] metric;
+    @XmlAttribute(name = Constants.URL)
+    private String url;
 
     public Stat[] getStats() {
         return stats;
