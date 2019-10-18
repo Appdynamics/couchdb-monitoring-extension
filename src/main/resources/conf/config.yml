@@ -64,8 +64,6 @@ numberOfThreads: 4
 
 # This section can be used to customize your metric path if needed
 metricPathReplacements:
-  - replace: "_"
-    replaceWith: "%"
   - replace: "percent"
     replaceWith: "%"
 
@@ -76,7 +74,7 @@ customDashboard:
   dashboardName: "CouchDB Monitor Dashboard"
   sslCertCheckEnabled: true
   # Update the path to the dashboard file.
-  pathToSIMDashboard: "monitors/CustomDashboard_Redis+Enterprise_Dashboard.json"
+  pathToSIMDashboard: "monitors/CouchDBMonitor/CouchDB+Dashboard.json"
   pathToNormalDashboard:
   periodicDashboardCheckInSeconds: 300
 
@@ -92,7 +90,7 @@ controllerInfo:
   password: "" # -Dappdynamics.agent.monitors.controller.password
   encryptedPassword: "" # -Dappdynamics.agent.monitors.controller.encryptedPassword
   accountAccessKey: "" # -Dappdynamics.agent.accountAccessKey
-  account: "customer1" # -Dappdynamics.agent.accountName
+  account: "" # -Dappdynamics.agent.accountName
   machinePath: "" # -Dappdynamics.machine.agent.hierarchyPath
   simEnabled: false # -Dappdynamics.sim.enabled
   applicationName: "" # -Dappdynamics.agent.applicationName

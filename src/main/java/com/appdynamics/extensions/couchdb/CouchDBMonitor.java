@@ -47,7 +47,7 @@ public class CouchDBMonitor extends ABaseMonitor {
 
         final CouchDBMonitor monitor = new CouchDBMonitor();
         final Map<String, String> taskArgs = Maps.newHashMap();
-        taskArgs.put("config-file", "/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/src/main/resources/conf/config.yml");
+        taskArgs.put("config-file", "/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/src/integration-test/resources/conf/config.yml");
         taskArgs.put("metrics-file", "/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/src/main/resources/conf/metrics.xml");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(new Runnable() {
