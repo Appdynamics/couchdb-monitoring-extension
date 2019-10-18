@@ -24,7 +24,7 @@ public class MetricCheckIT {
     }
 
     @Test
-    public void whenInstanceIsUpThenHeartBeatIs1ForServer() {
+    public void whenInstanceIsUpThenConnectionStatus1ForMultiNodeCluster() {
         JsonNode jsonNode = null;
         if (metricAPIService != null) {
             jsonNode = metricAPIService.getMetricData("",
@@ -33,8 +33,23 @@ public class MetricCheckIT {
         Assert.assertNotNull("Cannot connect to controller API", jsonNode);
         if (jsonNode != null) {
             JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
-            int heartBeat = (valueNode == null) ? 0 : valueNode.get(0).asInt();
-            Assert.assertEquals("heartbeat is 0", heartBeat, 1);
+            int connectionStatus = (valueNode == null) ? 0 : valueNode.get(0).asInt();
+            Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
+        }
+    }
+
+    @Test
+    public void whenInstanceIsUpThenConnectionStatus1ForSingleNodeCluster() {
+        JsonNode jsonNode = null;
+        if (metricAPIService != null) {
+            jsonNode = metricAPIService.getMetricData("",
+                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CCustom%20Metrics%7CCouch%20DB%7Ccluster3%7CConnection%20Status&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON");
+        }
+        Assert.assertNotNull("Cannot connect to controller API", jsonNode);
+        if (jsonNode != null) {
+            JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
+            int connectionStatus = (valueNode == null) ? 0 : valueNode.get(0).asInt();
+            Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
         }
     }
 

@@ -36,32 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 public class CouchDBMonitor extends ABaseMonitor {
 
-    public static void main(String[] args) throws TaskExecutionException, IOException {
-
-        ConsoleAppender ca = new ConsoleAppender();
-        ca.setWriter(new OutputStreamWriter(System.out));
-        ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
-        ca.setThreshold(Level.DEBUG);
-        org.apache.log4j.Logger.getRootLogger().addAppender(ca);
-
-
-        final CouchDBMonitor monitor = new CouchDBMonitor();
-        final Map<String, String> taskArgs = Maps.newHashMap();
-        taskArgs.put("config-file", "/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/src/integration-test/resources/conf/config.yml");
-        taskArgs.put("metrics-file", "/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/src/main/resources/conf/metrics.xml");
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                try {
-                    monitor.execute(taskArgs, null);
-                } catch (Exception e) {
-
-                    System.out.println("Error while running the task" + e);
-                }
-            }
-        }, 2, 60, TimeUnit.SECONDS);
-    }
-
     @Override
     protected String getDefaultMetricPrefix() {
         return Constants.DEFAULT_METRIC_PREFIX;

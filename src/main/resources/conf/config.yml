@@ -6,8 +6,11 @@ metricPrefix: 'Custom Metrics|CouchDB'
 
 # To know your Component-ID, Please refer the link
 # https://community.appdynamics.com/t5/Knowledge-Base/How-to-troubleshoot-missing-custom-metrics-or-extensions-metrics/ta-p/28695
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Enter your CouchDB servers below
+
+# Enter your CouchDB node information below
+# Enter one node from each cluster you want to monitor. The extension will automatically pull metrics from all nodes in that cluster.
 servers:
   - uri: 'http://couchdb.one:5984'
     username: 'admin' # user should have privileges in CouchDB
@@ -24,10 +27,13 @@ servers:
 #    useSSL: 'false'
 #    displayName: 'testCluster'
 
-# [.*] will fetch metrics from all nodes of the clusters specified in the [servers] section above
-# [""] or [] will fetch none.
-# Supports regex
-nodes: [".*"]
+#  - uri: 'https://172.0.0.2:6984'
+#    username: 'admin'
+#    password: 'admin'
+#    encryptedPassword: ''
+#    useSSL: 'false'
+#    displayName: 'testCluster2'
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 connection:
   socketTimeout: 5000 # Read Timeout
@@ -51,6 +57,14 @@ proxy:
   username: ""
   password: ""
   encryptedPassword: ""
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Filters metrics based on node name. Node name is set in CouchDB while creating the node
+# Node name can be found in the /_membership endpoint of CouchDB in "cluster_nodes" section.
+# A value of [".*"] will fetch metrics from all nodes.
+# [""] or [] will fetch none.
+# Supports regex
+nodes: [""]
 
 # Each CouchDB server in the "servers" section above, needs some number of threads = (total number of nodes in that cluster),
 # so add up the number nodes in each clusters you are monitoring.
@@ -67,10 +81,9 @@ metricPathReplacements:
   - replace: "percent"
     replaceWith: "%"
 
-# To enable dashboard uploading, fill out the sections [customDashboard] and [controllerInfo] below
-# Set enabled: false to disable dashboard upload
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 customDashboard:
-  enabled: true
+  enabled: true # Set to false to disable dashboard upload
   dashboardName: "CouchDB Monitor Dashboard"
   sslCertCheckEnabled: true
   # Update the path to the dashboard file.
@@ -78,8 +91,9 @@ customDashboard:
   pathToNormalDashboard:
   periodicDashboardCheckInSeconds: 300
 
-# If any of the following fields are not set, the values of the specific fields are set from the system properties of the corresponding fields as specified in the comments.
-# If the system properties are not set for the field, then the data is retrieved from machine agent configFile. Please refer to ControllerInfoFactory for more details.
+# If any of the following fields are not set, the values of the specific fields are set from the system properties
+# of the corresponding fields as specified in the comments.
+# If the system properties are not set for the field, then the data is retrieved from machine agent controller-info.xml.
 controllerInfo:
   controllerHost: "" # -Dappdynamics.controller.hostName
   controllerPort: 8090 # -Dappdynamics.controller.port
@@ -96,5 +110,7 @@ controllerInfo:
   applicationName: "" # -Dappdynamics.agent.applicationName
   tierName: "" # -Dappdynamics.agent.tierName
   nodeName: "" # -Dappdynamics.agent.nodeName
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 enableHealthChecks: true # If not set, will be retrieved from "-Dappdynamics.agent.monitors.healthchecks.enable=true". Defaults to true.

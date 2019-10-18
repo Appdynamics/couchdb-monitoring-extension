@@ -40,13 +40,13 @@ class CouchDBMonitorTask implements AMonitorTaskRunnable {
     @Override
     public void run() {
         Map<String, ?> config = configuration.getConfigYml();
-        AtomicInteger heartBeat = getConnectionStatus((Map<String, String>) server);
-        metricWriteHelper.printMetric(configuration.getMetricPrefix() + "|" + server.get(Constants.DISPLAY_NAME).toString() + "|" + "Connection Status", String.valueOf(heartBeat.get()), "AVERAGE", "AVERAGE", "INDIVIDUAL");
-        if (heartBeat.get() == 1) {
+        AtomicInteger connectionStatus = getConnectionStatus((Map<String, String>) server);
+        metricWriteHelper.printMetric(configuration.getMetricPrefix() + "|" + server.get(Constants.DISPLAY_NAME).toString() + "|" + "Connection Status", String.valueOf(connectionStatus.get()), "AVERAGE", "AVERAGE", "INDIVIDUAL");
+        if (connectionStatus.get() == 1) {
             LOGGER.info("Connected to {}", server.get(Constants.DISPLAY_NAME).toString());
-            List<String> nodes = (List<String>) config.get("nodes");
-            if (nodes.size() > 0) {
-                fetchMetrics(nodes);
+            List<String> nodePatterns = (List<String>) config.get("nodes");
+            if (nodePatterns.size() > 0) {
+                fetchMetrics(nodePatterns);
             }
         } else {
             LOGGER.info("Extension cannot connect to {}", server.get(Constants.DISPLAY_NAME).toString());
@@ -54,13 +54,13 @@ class CouchDBMonitorTask implements AMonitorTaskRunnable {
         phaser.arriveAndAwaitAdvance();
     }
 
-    private void fetchMetrics(List<String> nodes) {
+    private void fetchMetrics(List<String> nodePatterns) {
         try {
             JsonNode clusterNodes = getClusterNodes();
-            for (String node : nodes) {
+            for (String nodePattern : nodePatterns) {
                 for (JsonNode clusterNode : clusterNodes) {
-                    if (clusterNode.getTextValue().matches(node)) {
-                        LOGGER.debug("Wildcard match for node - {}", clusterNode.getTextValue());
+                    if (clusterNode.getTextValue().matches(nodePattern)) {
+                        LOGGER.debug("Wildcard match for node name - {}", clusterNode.getTextValue());
                         LOGGER.debug("Processing node {}", clusterNode.getTextValue());
                         NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, server.get(Constants.URI).toString(), server.get(Constants.DISPLAY_NAME).toString(), clusterNode.getTextValue(), phaser);
                         Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
@@ -90,12 +90,12 @@ class CouchDBMonitorTask implements AMonitorTaskRunnable {
 
     private AtomicInteger getConnectionStatus(Map<String, String> server) {
         String url = getConnectionUrl(server);
-        AtomicInteger heartbeat = new AtomicInteger(0);
+        AtomicInteger connectionStatus = new AtomicInteger(0);
         String response = HttpClientUtils.getResponseAsStr(this.configuration.getContext().getHttpClient(), url);
         if (response != null) {
-            heartbeat.set(1);
+            connectionStatus.set(1);
         }
-        return heartbeat;
+        return connectionStatus;
     }
 
     private String getConnectionUrl(Map<String, String> server) {
