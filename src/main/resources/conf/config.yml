@@ -64,7 +64,7 @@ proxy:
 # A value of [".*"] will fetch metrics from all nodes.
 # [""] or [] will fetch none.
 # Supports regex
-nodes: [""]
+nodes: [".*"]
 
 # Each CouchDB server in the "servers" section above, needs some number of threads = (total number of nodes in that cluster),
 # so add up the number nodes in each clusters you are monitoring.
