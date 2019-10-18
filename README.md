@@ -2,7 +2,6 @@ AppDynamics CouchDB Monitoring Extension
 ============================
 
 ## Use Case
-
 Apache CouchDB, commonly referred to as CouchDB, is an open source NOSQL database.
 The CouchDB Monitoring Extension can monitor multiple CouchDB clusters and display the statistics in AppDynamics Metric Browser.
 
@@ -16,7 +15,6 @@ This extension works only with the standalone Java machine agent. The extension 
 3. Restart the machine agent.
 
 ## Configuring the extension using config.yml ##
-
 * Configure the CouchDB monitoring extension by editing the config.yml file in `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/`
 The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213). 
 Please make sure that the right metricPrefix is chosen based on your machine agent deployment, 
@@ -27,18 +25,29 @@ encryptedPassword(only if password encryption required), proxy(optional), useSSL
 please configure the `connection` section.
 * Any changes to the config.yml does not require the machine agent to be restarted. 
 
-### Filtering the metrics
+## Filtering the metrics
 The extension supports filtering of the metrics based on patterns of the `name` of each CouchDB node. 
 The node name is set in CouchDB when CouchDB is initially installed on each node. 
 The node name can be found from the [/_membership endpoint](https://docs.couchdb.org/en/latest/cluster/nodes.html).
 
 ## Metrics in metrics.xml
-
-The metrics.xml is pre-configured with the CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats).
+* The metrics.xml is pre-configured with the CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats).
 It can be configured to collect only those metrics that are required.
+* For configuring the metrics, the following properties can be used:
+  
+         | Metric Property   |   Default value |         Possible values         |                                              Description                                                                                                |
+         | :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+         | alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
+         | aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)    |
+         | timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)   |
+         | clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)|
+         | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
+         | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
+         | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.   
 
 ## Credentials Encryption
-Please visit [this](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) page to get detailed instructions on password encryption. The steps in this document will guide you through the whole process.
+Please visit [this](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) 
+page to get detailed instructions on password encryption. The steps in this document will guide you through the whole process.
 
 ## Extensions Workbench
 Workbench is an inbuilt feature provided with each extension in order to assist you to fine tune the extension setup before you actually deploy it on the controller. Please review the following
