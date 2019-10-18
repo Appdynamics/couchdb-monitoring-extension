@@ -1,10 +1,11 @@
-package com.appdynamics.extensions.couchdb;
+package com.appdynamics.extensions.couchdb.metrics;
 
 import com.appdynamics.extensions.ABaseMonitor;
 import com.appdynamics.extensions.AMonitorJob;
 import com.appdynamics.extensions.MetricWriteHelper;
 import com.appdynamics.extensions.conf.MonitorContext;
 import com.appdynamics.extensions.conf.MonitorContextConfiguration;
+import com.appdynamics.extensions.couchdb.CouchDBMonitorTaskTest;
 import com.appdynamics.extensions.couchdb.config.Stats;
 import com.appdynamics.extensions.couchdb.metrics.NodeMetricsCollectorTask;
 import com.appdynamics.extensions.executorservice.MonitorExecutorService;
@@ -19,6 +20,7 @@ import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,6 +113,9 @@ public class NodeMetricsCollectorTaskTest {
         phaser.register();
         NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(contextConfiguration,
                 "localhost:5984", "displayName", "couchdb@localhost", phaser);
-        List<Metric> metricList = nodeMetricsCollectorTask.call(); //todo:assert
+        List<Metric> metricList = nodeMetricsCollectorTask.call();
+        Assert.assertTrue(metricList.get(0).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|auth%cache%hits"));
+        Assert.assertTrue(metricList.get(1).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|auth%cache%misses"));
+
     }
 }

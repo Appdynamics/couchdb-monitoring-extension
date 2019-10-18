@@ -1,10 +1,11 @@
-package com.appdynamics.extensions.couchdb;
+package com.appdynamics.extensions.couchdb.metrics;
 
 import com.appdynamics.extensions.ABaseMonitor;
 import com.appdynamics.extensions.AMonitorJob;
 import com.appdynamics.extensions.MetricWriteHelper;
 import com.appdynamics.extensions.conf.MonitorContext;
 import com.appdynamics.extensions.conf.MonitorContextConfiguration;
+import com.appdynamics.extensions.couchdb.CouchDBMonitorTaskTest;
 import com.appdynamics.extensions.couchdb.config.Stat;
 import com.appdynamics.extensions.couchdb.config.Stats;
 import com.appdynamics.extensions.couchdb.metrics.ParseApiResponse;
