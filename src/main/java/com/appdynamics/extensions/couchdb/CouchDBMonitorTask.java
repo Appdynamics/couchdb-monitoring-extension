@@ -74,9 +74,9 @@ class CouchDBMonitorTask implements AMonitorTaskRunnable {
     }
 
     private JsonNode getClusterNodes() throws Exception {
-        ObjectNode allNodes = HttpClientUtils.getResponseAsJson(configuration.getContext().getHttpClient(), server.get("uri").toString() + "/_membership", ObjectNode.class);
+        ObjectNode allNodes = HttpClientUtils.getResponseAsJson(configuration.getContext().getHttpClient(), server.get("uri").toString() + Constants.MEMBERSHIP, ObjectNode.class);
         if (allNodes != null && allNodes.size() > 0) {
-            JsonNode clusterNodes = allNodes.get("cluster_nodes");
+            JsonNode clusterNodes = allNodes.get(Constants.CLUSTER_NODES);
             if (clusterNodes != null && clusterNodes.size() > 0) {
                 return clusterNodes;
             } else {
