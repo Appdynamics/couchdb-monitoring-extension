@@ -14,12 +14,15 @@ import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
 import com.appdynamics.extensions.metrics.Metric;
 import com.appdynamics.extensions.metrics.MetricCharSequenceReplacer;
+import com.appdynamics.extensions.util.JsonUtils;
 import com.appdynamics.extensions.util.MetricPathUtils;
 import com.appdynamics.extensions.util.PathResolver;
 import com.appdynamics.extensions.yml.YmlReader;
+import com.google.common.collect.Lists;
 import com.singularity.ee.agent.systemagent.api.AManagedMonitor;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,16 +84,24 @@ public class ParseApiResponseTest {
         MonitorContextConfiguration contextConfiguration = new MonitorContextConfiguration("Couch DB", "Custom Metrics|Couch DB|", PathResolver.resolveDirectory(AManagedMonitor.class), Mockito.mock(AMonitorJob.class));
         contextConfiguration.setMetricXml("src/test/resources/metrics_for_nested_stats.xml", Stats.class);
         File file = null;
+        List<Metric> metricList = Lists.newArrayList();
         file = new File("src/test/resources/stats_api_response.json");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readValue(file, JsonNode.class);
         Stats stats = (Stats) contextConfiguration.getMetricsXml();
         Stat[] statArray = stats.getStat();
         for (Stat stat : statArray) {
-            ParseApiResponse parseApiResponse = new ParseApiResponse("Custom Metrics|Couch DB|");
-            List<Metric> metricList = parseApiResponse.extractMetricsFromApiResponse(stat, jsonNode);
+            ParseApiResponse parseApiResponse = new ParseApiResponse("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb");
+            metricList.addAll(parseApiResponse.extractMetricsFromApiResponse(stat,  JsonUtils.getNestedObject(jsonNode, stat.getType())));
         }
-
+        Assert.assertTrue(metricList.get(0).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|arithmetic%mean"));
+        Assert.assertTrue(metricList.get(1).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|arithmetic%mean"));
+        Assert.assertTrue(metricList.get(2).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|arithmetic%mean"));
+        Assert.assertTrue(metricList.get(3).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|vdu%rejects"));
+        Assert.assertTrue(metricList.get(4).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|map%doc"));
+        Assert.assertTrue(metricList.get(5).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|emits"));
+        Assert.assertTrue(metricList.get(6).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|auth%cache%hits"));
+        Assert.assertTrue(metricList.get(7).getMetricPath().equalsIgnoreCase("Custom Metrics|Couch DB|displayName|couchdb@localhost|couchdb|auth%cache%misses"));
     }
 
 

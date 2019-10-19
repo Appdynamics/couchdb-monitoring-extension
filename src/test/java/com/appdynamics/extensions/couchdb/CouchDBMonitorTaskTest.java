@@ -152,7 +152,12 @@ public class CouchDBMonitorTaskTest {
             task.run();
         }
         verify(metricWriteHelper, times(2)).printMetric(pathCaptor.capture(), pathCaptor.capture(), anyString(), anyString(), anyString());
-        System.out.println(pathCaptor.getAllValues()); //todo: assert
+        List objectMetricList = pathCaptor.getAllValues();
+        Assert.assertTrue(objectMetricList.size() == 4);
+        Assert.assertTrue(objectMetricList.get(0).toString().equals("Custom Metrics|Couch DB|MultiNodeCluster|Connection Status"));
+        Assert.assertTrue(objectMetricList.get(1).toString().equals("1"));
+        Assert.assertTrue(objectMetricList.get(2).toString().equals("Custom Metrics|Couch DB|SingleNodeCluster|Connection Status"));
+        Assert.assertTrue(objectMetricList.get(3).toString().equals("1"));
     }
 
     @Test
@@ -187,7 +192,13 @@ public class CouchDBMonitorTaskTest {
         ArgumentCaptor<List> pathCaptorList = ArgumentCaptor.forClass(List.class);
         Thread.sleep(100);
         verify(metricWriteHelper, times(2)).transformAndPrintMetrics(pathCaptorList.capture());
-        System.out.println(pathCaptorList.getAllValues()); //todo: assert
+        List metricsList = pathCaptorList.getAllValues();
+        List multiNodeClusterMetrics = (List) metricsList.get(0);
+        multiNodeClusterMetrics.get(0).toString().equalsIgnoreCase("Custom Metrics|Couch DB|MultiNodeCluster|couchdb@localhost|couchdb|auth%cache%hits");
+        multiNodeClusterMetrics.get(0).toString().equalsIgnoreCase("1");
+        List singleNodeClusterMetrics = (List) metricsList.get(1);
+        singleNodeClusterMetrics.get(0).toString().equalsIgnoreCase("Custom Metrics|Couch DB|SingleNodeCluster|couchdb@localhost|couchdb|auth%cache%hits");
+        singleNodeClusterMetrics.get(1).toString().equalsIgnoreCase("1");
     }
 
     @Test
@@ -221,5 +232,7 @@ public class CouchDBMonitorTaskTest {
         }
         ArgumentCaptor<List> pathCaptorList = ArgumentCaptor.forClass(List.class);
         verify(metricWriteHelper, times(0)).transformAndPrintMetrics(pathCaptorList.capture());
+        List metricsList = pathCaptorList.getAllValues();
+        Assert.assertTrue(metricsList.size() == 0);
     }
 }
