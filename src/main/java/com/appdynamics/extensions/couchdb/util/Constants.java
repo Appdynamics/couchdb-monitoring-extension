@@ -14,4 +14,6 @@ public class Constants {
     public static final String METRIC = "metric";
     public static final String URL = "url";
     public static final String STAT = "stat";
+    public static final String CLUSTER_NODES = "cluster_nodes";
+    public static final String MEMBERSHIP = "/_membership";
 }
