@@ -19,8 +19,6 @@ public class Stat {
     private String type;
     @XmlElement(name = Constants.METRIC)
     private Metric[] metric;
-    @XmlAttribute(name = Constants.URL)
-    private String url;
 
     public Stat[] getStats() {
         return stats;
@@ -44,14 +42,6 @@ public class Stat {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 }
 

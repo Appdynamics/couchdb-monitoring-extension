@@ -55,7 +55,8 @@ public class CouchDBMonitor extends ABaseMonitor {
     protected void doRun(TasksExecutionServiceProvider tasksExecutionServiceProvider) {
         List<Map<String, ?>> servers = getServers();
         for (Map<String, ?> server : servers) {
-            CouchDBMonitorTask task = new CouchDBMonitorTask(tasksExecutionServiceProvider.getMetricWriteHelper(), this.getContextConfiguration(), server);
+            CouchDBMonitorTask task = new CouchDBMonitorTask(tasksExecutionServiceProvider.getMetricWriteHelper(),
+                    this.getContextConfiguration(), server);
             AssertUtils.assertNotNull(server.get(Constants.DISPLAY_NAME), "The displayName can not be null");
             tasksExecutionServiceProvider.submit(server.get(Constants.DISPLAY_NAME).toString(), task);
         }
