@@ -27,15 +27,13 @@ public class MetricCheckIT {
     public void whenInstanceIsUpThenConnectionStatus1ForMultiNodeCluster() {
         JsonNode jsonNode = null;
         if (metricAPIService != null) {
-            jsonNode = metricAPIService.getMetricData("",
-                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CCustom%20Metrics%7CCouch%20DB%7Ccluster1%7CConnection%20Status&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON");
+            jsonNode = metricAPIService.getMetricData("", "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CIndividual%20Nodes%7CCouchDBTest%7CCustom%20Metrics%7CCouch%20DB%7Ccluster1%7CConnection%20Status&time-range-type=BEFORE_NOW&duration-in-mins=5&output=JSON");
         }
         Assert.assertNotNull("Cannot connect to controller API", jsonNode);
-        if (jsonNode != null) {
-            JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
-            int connectionStatus = (valueNode == null) ? 0 : valueNode.get(0).asInt();
-            Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
-        }
+        JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
+        Assert.assertNotNull(valueNode);
+        int connectionStatus = valueNode.get(0).asInt();
+        Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
     }
 
     @Test
@@ -43,14 +41,14 @@ public class MetricCheckIT {
         JsonNode jsonNode = null;
         if (metricAPIService != null) {
             jsonNode = metricAPIService.getMetricData("",
-                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CCustom%20Metrics%7CCouch%20DB%7Ccluster3%7CConnection%20Status&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON");
+                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CIndividual%20Nodes%7CCouchDBTest%7CCustom%20Metrics%7CCouch%20DB%7Ccluster3%7CConnection%20Status&time-range-type=BEFORE_NOW&duration-in-mins=5&output=JSON");
         }
         Assert.assertNotNull("Cannot connect to controller API", jsonNode);
-        if (jsonNode != null) {
-            JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
-            int connectionStatus = (valueNode == null) ? 0 : valueNode.get(0).asInt();
-            Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
-        }
+        JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
+        Assert.assertNotNull(valueNode);
+        int connectionStatus = valueNode.get(0).asInt();
+        Assert.assertEquals("Connection Status is 1", connectionStatus, 1);
+
     }
 
     @Test
@@ -58,14 +56,13 @@ public class MetricCheckIT {
         JsonNode jsonNode = null;
         if (metricAPIService != null) {
             jsonNode = metricAPIService.getMetricData("",
-                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CCustom%20Metrics%7CCouch%20DB%7CMetrics%20Uploaded&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON");
+                    "Server%20&%20Infrastructure%20Monitoring/metric-data?metric-path=Application%20Infrastructure%20Performance%7CRoot%7CIndividual%20Nodes%7CCouchDBTest%7CCustom%20Metrics%7CCouch%20DB%7CMetrics%20Uploaded&time-range-type=BEFORE_NOW&duration-in-mins=5&output=JSON");
         }
         Assert.assertNotNull("Cannot connect to controller API", jsonNode);
-        if (jsonNode != null) {
-            JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
-            int totalNumberOfMetricsReported = (valueNode == null) ? 0 : valueNode.get(0).asInt();
-            Assert.assertTrue(totalNumberOfMetricsReported > 1);
-        }
+        JsonNode valueNode = JsonUtils.getNestedObject(jsonNode, "*", "metricValues", "*", "value");
+        Assert.assertNotNull(valueNode);
+        int totalNumberOfMetricsReported = valueNode.get(0).asInt();
+        Assert.assertTrue(totalNumberOfMetricsReported > 1);
     }
 
     @Test
