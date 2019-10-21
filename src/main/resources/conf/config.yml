@@ -34,7 +34,7 @@ servers:
 #    useSSL: 'false'
 #    displayName: 'testCluster2'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+:q
 connection:
   socketTimeout: 5000 # Read Timeout
   connectTimeout: 5000 # Connection Timeout

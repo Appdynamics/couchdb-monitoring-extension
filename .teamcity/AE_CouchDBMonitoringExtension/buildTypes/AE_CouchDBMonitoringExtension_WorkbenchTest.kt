@@ -2,7 +2,7 @@ package AE_CouchDBMonitoringExtension.buildTypes
 
 import AE_CouchDBMonitoringExtension.publishCommitStatus
 import AE_CouchDBMonitoringExtension.vcsRoots.AE_CouchDBMonitoringExtension
-import AE_CouchDBMonitoringExtensionr.withDefaults
+import AE_CouchDBMonitoringExtension.withDefaults
 import jetbrains.buildServer.configs.kotlin.v2018_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2018_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2018_2.FailureAction
