@@ -1,5 +1,5 @@
 #If SIM is enabled, use this
-metricPrefix: 'Custom Metrics|CouchDB'
+metricPrefix: "Custom Metrics|CouchDB"
 
 #If SIM is not enabled, then use this
 #metricPrefix: 'Server|Component:<Component-ID>|Custom Metrics|CouchDB'
@@ -12,29 +12,29 @@ metricPrefix: 'Custom Metrics|CouchDB'
 # Enter your CouchDB node information below
 # Enter one node from each cluster you want to monitor. The extension will automatically pull metrics from all nodes in that cluster.
 servers:
-  - uri: 'http://couchdb.one:5984'
-    username: 'admin' # user should have privileges in CouchDB
-    password: 'admin'
-    encryptedPassword: ''
-    useSSL: 'false'
-    displayName: 'myCluster'
+  - uri: "http://couchdb.one:5984"
+    username: "admin" # user should have privileges in CouchDB
+    password: "admin"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "myCluster"
 
 # More servers go here
-#  - uri: 'https://couchdb.two:6984'
-#    username: 'admin'
-#    password: 'admin'
-#    encryptedPassword: ''
-#    useSSL: 'false'
-#    displayName: 'testCluster'
+#  - uri: "https://couchdb.two:6984"
+#    username: "admin"
+#    password: "admin"
+#    encryptedPassword: ""
+#    useSSL: "false"
+#    displayName: "testCluster"
 
-#  - uri: 'https://172.0.0.2:6984'
-#    username: 'admin'
-#    password: 'admin'
-#    encryptedPassword: ''
-#    useSSL: 'false'
-#    displayName: 'testCluster2'
+#  - uri: "https://172.0.0.2:6984"
+#    username: "admin"
+#    password: "admin"
+#    encryptedPassword: ""
+#    useSSL: "false"
+#    displayName: "testCluster2"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:q
+
 connection:
   socketTimeout: 5000 # Read Timeout
   connectTimeout: 5000 # Connection Timeout
@@ -66,7 +66,7 @@ proxy:
 # Supports regex
 nodes: [".*"]
 
-# Each CouchDB server in the "servers" section above, needs some number of threads = (total number of nodes in that cluster),
+# Each CouchDB server in the "servers" section above, needs some number of threads = 1 + (total number of nodes in that cluster),
 # so add up the number nodes in each clusters you are monitoring.
 
 # -------------------------
