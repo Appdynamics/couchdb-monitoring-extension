@@ -64,7 +64,7 @@ public class IntegrationTestUtils {
             if (controllerInfoValidator.isValidated()) {
                 ControllerClient controllerClient = ControllerClientFactory.initialize(controllerInfo,
                         (Map<String, ?>) config.get("connection"), (Map<String, ?>) config.get("proxy"),
-                        (String) config.get("enryptionKey"));
+                        (String) config.get("encryptionKey"));
                 logger.debug("Initialized ControllerClient");
                 return ControllerAPIServiceFactory.initialize(controllerInfo, controllerClient);
             }
