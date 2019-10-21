@@ -1,4 +1,4 @@
-metricPrefix: Custom Metrics|Couch DB|
+metricPrefix: "Custom Metrics|Couch DB|"
 
 servers:
   - uri: "${COUCHDB_ONE}"
