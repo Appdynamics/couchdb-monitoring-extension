@@ -30,18 +30,29 @@
 
         <stat type="dbinfo">
             <stat type="value">
-                <metric attr="arithmetic_mean" alias="Avg DB Info Calls" aggregationType="OBSERVATION"
+                <metric attr="arithmetic_mean" alias="Avg Latency - DB Info call" aggregationType="OBSERVATION"
                         timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
             </stat>
         </stat>
-        <!--    collect_results_time-->
+
+        <stat type="collect_results_time">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg Latency - collect_db calls(microseconds)" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
         <metric attr="database_writes" alias="DB Writes" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
                 clusterRollUpType="INDIVIDUAL"/>
         <metric attr="database_reads" alias="DB Reads" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
                 clusterRollUpType="INDIVIDUAL"/>
         <metric attr="database_purges" alias="DB Purge" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
                 clusterRollUpType="INDIVIDUAL"/>
-        <!--    db_open_time-->
+        <stat type="db_open_time">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg DB Open Time(milliseconds)" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
         <metric attr="document_inserts" alias="Doc Inserts" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
                 clusterRollUpType="INDIVIDUAL"/>
         <metric attr="document_writes" alias="Doc Writes" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
