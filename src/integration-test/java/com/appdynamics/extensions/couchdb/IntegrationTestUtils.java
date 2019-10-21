@@ -57,7 +57,7 @@ public class IntegrationTestUtils {
         if (controllerInfoMap == null) {
             controllerInfoMap = Maps.newHashMap();
         }
-        controllerInfoMap.put("controllerHost", "localhost");
+        controllerInfoMap.put("controllerHost", "localhost"); // needs to be overridden to localhost, because "controller" is not resolved by TC agent(as it is not containerized)
         try {
             ControllerInfo controllerInfo = ControllerInfoFactory.initialize(controllerInfoMap, installDir);
             logger.info("Initialized ControllerInfo");

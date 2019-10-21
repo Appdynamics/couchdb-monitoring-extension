@@ -19,6 +19,9 @@ object Project : Project({
     buildType(AE_CouchDBMonitoringExtension_IntegrationTests)
     buildType(AE_CouchDBMonitoringExtension_WorkbenchTest)
 
+    params{
+        param("env.APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY", "SJ5b2m7d1$354")
+    }
     features {
         versionedSettings {
             mode = ENABLED
