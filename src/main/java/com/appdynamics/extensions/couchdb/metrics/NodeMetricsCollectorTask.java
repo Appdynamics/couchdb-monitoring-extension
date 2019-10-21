@@ -45,7 +45,7 @@ public class NodeMetricsCollectorTask implements Callable<List<Metric>> {
                 metricsList.addAll(parser.extractMetricsFromApiResponse(statistic, JsonUtils.getNestedObject(jsonNode, statistic.getType())));
             }
         }
-        phaser.arriveAndDeregister();
+        phaser.arriveAndDeregister(); //TODO: should be in finally  block
         return metricsList;
     }
 }
