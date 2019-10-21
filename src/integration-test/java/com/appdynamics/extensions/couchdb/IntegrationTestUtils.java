@@ -57,6 +57,7 @@ public class IntegrationTestUtils {
         if (controllerInfoMap == null) {
             controllerInfoMap = Maps.newHashMap();
         }
+        controllerInfoMap.put("controllerHost", "localhost");
         try {
             ControllerInfo controllerInfo = ControllerInfoFactory.initialize(controllerInfoMap, installDir);
             logger.info("Initialized ControllerInfo");
