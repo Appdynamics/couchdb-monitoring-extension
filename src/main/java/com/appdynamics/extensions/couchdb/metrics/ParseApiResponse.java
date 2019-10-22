@@ -38,14 +38,14 @@ public class ParseApiResponse {
                 JsonNode value = JsonUtils.getNestedObject(jsonNode, metricFromConfig.getAttr());
                 String metricValue;
                 if (value == null) {
-                    LOGGER.debug("{} not found in response", metricFromConfig.getAttr());
+                    LOGGER.debug("Metric {} in stat {} not found in response",  metricFromConfig.getAttr(), stat.getType());
                 } else {
                     if (value.has("value")) {
                         metricValue = value.get("value").toString();
                     } else {
                         metricValue = value.toString();
                     }
-                    LOGGER.info("Processing metric [{}] ", metricFromConfig.getAttr());
+                    LOGGER.debug("Processing metric [{}] ", metricFromConfig.getAttr());
                     metricPathTokens = metricFromConfig.getAttr().split("\\|");
                     Map<String, String> propertiesMap = objectMapper.convertValue(metricFromConfig, Map.class);
                     Metric metric = new Metric(metricFromConfig.getAttr(), metricValue, propertiesMap, metricPrefix, metricPathTokens);
