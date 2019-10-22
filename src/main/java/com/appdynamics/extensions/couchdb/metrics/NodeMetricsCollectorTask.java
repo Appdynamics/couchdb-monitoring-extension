@@ -54,12 +54,11 @@ public class NodeMetricsCollectorTask implements Callable<List<Metric>> {
                             JsonUtils.getNestedObject(jsonNode, statistic.getType())));
                 }
             }
-            phaser.arriveAndDeregister();
         }catch(Exception e ){
-            LOGGER.info("Phaser threw exception", e);
+            LOGGER.info("Exception while parsing node metrics -", e);
+        }finally {
+            phaser.arriveAndDeregister();
         }
-
         return metricsList;
-
     }
 }

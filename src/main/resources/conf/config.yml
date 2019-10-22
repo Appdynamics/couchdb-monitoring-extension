@@ -72,9 +72,9 @@ nodes: [".*"]
 # -------------------------
 # Example: if couchdb.one has 3 nodes and couchdb.two has 1 node,
 # numberOfThreads = numberOfThreads for couchdb.one + numberOfThreads for couchdb.two
-# numberOfThreads = (3) + (1) = 4
+# numberOfThreads = (1 + 3) + (1 + 1) = 6
 #-------------------------------
-numberOfThreads: 4
+numberOfThreads: 6
 
 # This section can be used to customize your metric path if needed
 metricPathReplacements:
