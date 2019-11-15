@@ -19,13 +19,13 @@ servers:
     useSSL: "false"
     displayName: "myCluster"
 
-# More servers go here
+# If you want to monitor more clusters, enter one node from each cluster below
 #  - uri: "https://couchdb.two:6984"
 #    username: "admin"
 #    password: "admin"
 #    encryptedPassword: ""
 #    useSSL: "false"
-#    displayName: "testCluster"
+#    displayName: "testCluster" # this is one node from testCluster
 
 #  - uri: "https://172.0.0.2:6984"
 #    username: "admin"
