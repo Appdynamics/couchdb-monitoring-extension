@@ -9,14 +9,16 @@ The CouchDB Monitoring Extension can monitor multiple CouchDB clusters and displ
 Before the extension is installed, the prerequisites mentioned [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213) need to be met. Please do not proceed with the extension installation if the specified prerequisites are not met.
 
 ## Installation
-1. Download and unzip the CouchDBMonitor-{version}.zip file into `<MACHINE_AGENT_HOME>/monitors/` directory.
-2. Configure the extension by referring to the below section. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
-3. Restart the machine agent.
-4. The extension needs to be able to connect to CouchDB in order to collect and send metrics. To do this, you will have to either establish a remote connection in between the extension and the product, or have an agent on the same machine running the product in order for the extension to collect and send the metrics.
+1. Download and unzip the CouchDBMonitor-{version}.zip file into `<MACHINE_AGENT_HOME>/monitors/` directory. 
+2. Please place the extension in the "monitors" directory of your Machine Agent installation directory. Do not place the extension in the "extensions" directory of your Machine Agent installation directory.
+3. Configure the extension by referring to the below section. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
+4. Restart the machine agent.
+5. The extension needs to be able to connect to CouchDB in order to collect and send metrics. To do this, you will have to either establish a remote connection in between the extension and the product, or have an agent on the same machine running the product in order for the extension to collect and send the metrics.
 
 ## Configuration 
+In order to use this extension, the following files need to be configured - config.yml and metrics.xml. Here's how to configure those files. 
 
-### Configuring the extension using config.yml
+### Config.yml
 * Configure the CouchDB monitoring extension by editing the config.yml file in `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/`
 * Enter one node from each of the clusters you are monitoring in the `servers` section of the config.yml. The extension will automatically collect metrics from all nodes in the cluster.
 * Configure the CouchDB instances by specifying the URI(required), username(required), password(required) of the CouchDB account, 
@@ -55,9 +57,11 @@ servers:
 * Please copy all the contents of the config.yml file and go to http://www.yamllint.com/ . On reaching the website, paste the contents and press the “Go” button on the bottom left.
 If you get a valid output, that means your formatting is correct and you may move on to the next step.
 
-### Configuring the extension using metrics.xml
-* The metrics.xml is a file with the list of all metrics that the extension will fetch. 
-  The metrics.xml is pre-configured with the CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats). It can be configured to collect only those metrics that are required.
+### Metrics.xml
+* The metrics.xml is a configurable file with the list of all metrics that the extension will fetch. 
+* The extension reports primary CouchDB operation metrics from each of your servers.  The metrics reported by the extension are from the `couchdb` group of the [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats)
+* The metrics.xml is pre-configured with CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats). 
+* The metrics.xml can be configured to report only those metrics that are required. Please remove or comment out metrics that you don't require. 
 * For configuring the metrics, the following properties can be used:
 
          | Metric Property   |   Default value |         Possible values         |                                              Description                                                       |
