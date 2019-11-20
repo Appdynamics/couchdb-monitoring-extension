@@ -1,0 +1,76 @@
+version: '2'
+services:
+
+  couchdb.one:
+    image: couchdb
+    container_name: couchdb.one
+    hostname: couchdb.one
+    ports:
+      - "5984:5984"
+      - "5986:5986"
+    environment:
+      - NODENAME=couchdb.one
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  couchdb.two:
+    image: couchdb
+    container_name: couchdb.two
+    hostname: couchdb.two
+    ports:
+      - "15984:5984"
+      - "15986:5986"
+
+    environment:
+      - NODENAME=couchdb.two
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  couchdb.three:
+    image: couchdb
+    container_name: couchdb.three
+    hostname: couchdb.three
+    ports:
+      - "25984:5984"
+      - "25986:5986"
+    environment:
+      - NODENAME=couchdb.three
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  controller:
+    image: dtr.corp.appdynamics.com/appdynamics/enterprise-console:latest
+    container_name: controller
+    ports:
+      - "8080:8080"
+      - "9080:9080"
+      - "9200:9200"
+  machine:
+    container_name: machine
+    environment:
+      - APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+      - APPDYNAMICS_CONTROLLER_HOST_NAME=controller
+      - APPDYNAMICS_AGENT_ACCOUNT_NAME=customer1
+      - APPDYNAMICS_CONTROLLER_USER=user1
+      - APPDYNAMICS_CONTROLLER_PWD=welcome
+      - APPDYNAMICS_CONTROLLER_PORT=8080
+      - APPDYNAMICS_CONTROLLER_SSL_ENABLED=false
+      - APPDYNAMICS_AGENT_UNIQUE_HOST_ID=CouchDBTest # needed because the roll-up does not happen in SIM browser
+      - COUCHDB_ONE=http://couchdb.one:5984
+      - COUCHDB_TWO=http://couchdb.two:5984
+      - COUCHDB_THREE=http://couchdb.three:5984
+      - COUCHDB_USER=admin
+      - COUCHDB_PWD=admin
+      - MACHINE_AGENT_PROPERTIES=-Dappdynamics.sim.enabled=true -Dappdynamics.docker.enabled=false
+    build:
+      context: .
+      dockerfile: Dockerfile_MA
+    volumes:
+      - /:/hostroot:ro
+      - /var/run/docker.sock:/var/run/docker.sock
