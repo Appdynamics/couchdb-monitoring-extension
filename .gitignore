@@ -1,13 +1,10 @@
-*.class
-*.iml
-
-
-# Package Files #
-*.war
-*.ear
-
-.idea
-dist
-*.DS_Store
-
 target
+*.iml
+.settings
+.classpath
+.project
+*.log
+*.ipr
+*.iws
+*.idea
+.DS_Store

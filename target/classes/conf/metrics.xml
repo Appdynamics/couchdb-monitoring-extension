@@ -1,0 +1,177 @@
+<stats>
+    <stat type="couchdb">
+        <metric attr="auth_cache_hits" alias="Number of Cache Hits" aggregationType="OBSERVATION"
+                timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+        <metric attr="auth_cache_misses" alias="Number of Cache Misses" aggregationType="OBSERVATION"
+                timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+
+        <stat type="httpd">
+            <metric attr="aborted_requests" alias="Number Aborted Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <stat type="bulk_docs">
+                <stat type="value">
+                    <metric attr="arithmetic_mean" alias="Bulk Docs" aggregationType="OBSERVATION"
+                            timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+                </stat>
+            </stat>
+            <metric attr="bulk_requests" alias="Number of Bulk Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="requests" alias="Number of http Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="temporary_view_reads" alias="Temporary View Reads" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="view_reads" alias="Number of View Reads" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="clients_requesting_changes" alias="Number of Clients Requesting Changes"
+                    aggregationType="OBSERVATION" timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="purge_requests" alias="Number of Purge Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+        </stat>
+
+        <stat type="dbinfo">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg Latency - DB Info call" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
+
+        <stat type="collect_results_time">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg Latency - collect_db calls(microseconds)" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
+        <metric attr="database_writes" alias="DB Writes" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <metric attr="database_reads" alias="DB Reads" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <metric attr="database_purges" alias="DB Purge" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <stat type="db_open_time">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg DB Open Time(milliseconds)" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
+        <metric attr="document_inserts" alias="Doc Inserts" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <metric attr="document_writes" alias="Doc Writes" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <stat type="document_purges">
+            <metric attr="total" alias="Total Doc Purges" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="success" alias="Successful Doc Purges" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="failure" alias="Failed Doc Purges" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+        </stat>
+        <stat type="httpd_request_methods">
+            <metric attr="COPY" alias="Number OF HTTP Copy Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="DELETE" alias="Number OF HTTP DELETE Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="GET" alias="Number OF HTTP GET Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="OPTIONS" alias="Number OF HTTP OPTIONS Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="HEAD" alias="Number OF HTTP HEAD Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="POST" alias="Number OF HTTP POST Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="PUT" alias="Number OF HTTP PUT Requests" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+        </stat>
+
+        <stat type="httpd_status_codes">
+            <metric attr="200" alias="200 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="201" alias="201 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="202" alias="202 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="204" alias="204 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="206" alias="206 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="301" alias="301 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="302" alias="302 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="304" alias="304 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="400" alias="400 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="401" alias="401 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="403" alias="403 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="404" alias="404 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="405" alias="405 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="406" alias="406 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="409" alias="409 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="412" alias="412 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="413" alias="413 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="414" alias="414 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="415" alias="415 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="416" alias="416 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="417" alias="417 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="500" alias="500 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="501" alias="501 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="503" alias="503 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="301" alias="204 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="301" alias="204 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="301" alias="204 Requests" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+        </stat>
+        <metric attr="open_databases" alias="Open DBs" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+        <metric attr="open_os_files" alias="Open OS files" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                clusterRollUpType="INDIVIDUAL"/>
+
+        <stat type="request_time">
+            <stat type="value">
+                <metric attr="arithmetic_mean" alias="Avg Request Time" aggregationType="OBSERVATION"
+                        timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
+        <stat type="couch_server">
+            <stat type="lru_skip">
+                <metric attr="value" alias="LRU Skip" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                        clusterRollUpType="INDIVIDUAL"/>
+            </stat>
+        </stat>
+        <stat type="query_server">
+            <metric attr="vdu_rejects" alias="validate doc update Rejects" aggregationType="OBSERVATION"
+                    timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+            <stat type="vdu_process_time">
+                <stat type="value">
+                    <metric attr="arithmetic_mean" alias="validate doc update duration" aggregationType="OBSERVATION"
+                            timeRollUpType="CURRENT" clusterRollUpType="INDIVIDUAL"/>
+                </stat>
+            </stat>
+        </stat>
+        <stat type="mrview">
+            <metric attr="map_doc" alias="View Server Doc Count" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+            <metric attr="emits" alias="Emit Count" aggregationType="OBSERVATION" timeRollUpType="CURRENT"
+                    clusterRollUpType="INDIVIDUAL"/>
+        </stat>
+
+    </stat>
+
+</stats>

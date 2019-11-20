@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <mkdir dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor"/>
+  <copy todir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor">
+    <fileset includes="monitor.xml" dir="src/main/resources/conf"/>
+    <fileset includes="config.yml" dir="src/main/resources/conf"/>
+    <fileset includes="metrics.xml" dir="src/main/resources/conf"/>
+    <fileset includes="CouchDB+Dashboard.json" dir="src/main/resources/dashboards"/>
+  </copy>
+  <copy todir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor">
+    <fileset includes="couchdb-monitoring-extension.jar" dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target"/>
+  </copy>
+  <copy todir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor">
+    <fileset includes="LICENSE" dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension"/>
+  </copy>
+  <copy todir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor">
+    <fileset includes="NOTICE.txt" dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension"/>
+  </copy>
+  <zip destfile="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor-2.0.0.zip">
+    <zipfileset prefix="CouchDBMonitor/" filemode="755" dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor"/>
+  </zip>
+  <delete dir="/Users/vishaka.sekar/AppDynamics/couchdb-monitoring-extension/target/CouchDBMonitor"/>
+</target>
+</project>
