@@ -108,7 +108,7 @@ Number of document inserts
 Number of document writes
 Total number of document purges
 Number of successful document purges
-Number of failed document purges" 
+Number of failed document purges
 
 ```
 The following metrics are reported under `httpd_request_method` section:
