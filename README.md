@@ -59,7 +59,6 @@ If you get a valid output, that means your formatting is correct and you may mov
 
 ### Metrics.xml
 * The metrics.xml is a configurable file with the list of all metrics that the extension will fetch. 
-* The extension reports primary CouchDB operation metrics from each of your servers.  The metrics reported by the extension are from the `couchdb` group of the [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats)
 * The metrics.xml is pre-configured with CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats). 
 * The metrics.xml can be configured to report only those metrics that are required. Please remove or comment out metrics that you don't require. 
 * For configuring the metrics, the following properties can be used:
@@ -73,6 +72,81 @@ If you get a valid output, that means your formatting is correct and you may mov
          | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
          | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
          | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.   |
+
+## Metrics
+* The extension reports primary CouchDB operation metrics from each of your servers.  The metrics reported by the extension are from the `couchdb` group of the [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats).
+
+The following metrics are reported under `couchdb` section:
+```
+Number of Cache Hits
+Number of Cache Misses
+Number of Open DBs
+Number of Open OS files
+Number of DB Writes
+Number of DB Reads
+Number of DB Purges
+```
+
+The following metrics are reported under `httpd` section:
+```
+Number Aborted Requests
+Number of Bulk Docs
+Number of Bulk Requests
+Number of http Requests
+Temporary View Reads
+Number of View Reads
+Number of Clients Requesting Changes
+Number of Purge Requests
+```
+The following metrics are reported under `dbinfo` section:
+
+```
+Avg Latency - DB Info call
+Avg Latency - collect_db calls(microseconds)
+Avg DB open time(milliseconds)
+Number of document inserts
+Number of document writes
+Total number of document purges
+Number of successful document purges
+Number of failed document purges" 
+
+```
+The following metrics are reported under `httpd_request_method` section:
+```
+Number OF HTTP Copy Requests
+Number OF HTTP DELETE Requests
+Number OF HTTP GET Requests
+Number OF HTTP OPTIONS Requests
+Number OF HTTP HEAD Requests
+Number OF HTTP POST Requests
+Number OF HTTP PUT Requests
+```
+
+The following metrics are reported under `httpd_status_codes` section:
+```
+2XX Requests
+3XX Requests
+4XX Requests  
+5XX Requests
+```
+
+The following metrics are reported under `request_time` section:
+
+```
+Avg Request Time
+```
+The following metric is reported under `couch_server` section:
+```
+LRU Skip
+```
+The following metric is listed under `query_server` section:
+```
+validate document update Rejects
+validate doc update Duration
+View Server Document Count
+Emit Count
+```
+
 
 
 ## Filtering the metrics
