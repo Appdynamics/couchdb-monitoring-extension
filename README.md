@@ -1,134 +1,215 @@
-CouchDB Monitoring Extension
+AppDynamics CouchDB Monitoring Extension
 ============================
-This extension works only with the standalone machine agent.
-
 
 ## Use Case
+Apache CouchDB, commonly referred to as CouchDB, is an open-source NoSQL database.
+The CouchDB Monitoring Extension can monitor multiple CouchDB clusters and display the statistics in AppDynamics Metric Browser.
 
-Apache CouchDB, commonly referred to as CouchDB, is an open source database that focuses on ease of use and on being "a database that completely embraces the web." It is a NoSQL database that uses JSON to store data, uses JavaScript as its query language using MapReduce, and uses HTTP for an API. The CouchDB monitoring extension gathers metrics for the specified hosts that have couchDB installed. 
+## Prerequisites
+Before the extension is installed, the prerequisites mentioned [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213) need to be met. Please do not proceed with the extension installation if the specified prerequisites are not met.
 
-## Installation ##
+## Installation
+1. Download and unzip the CouchDBMonitor-{version}.zip file into `<MACHINE_AGENT_HOME>/monitors/` directory. 
+2. Please place the extension in the "monitors" directory of your Machine Agent installation directory. Do not place the extension in the "extensions" directory of your Machine Agent installation directory.
+3. Configure the extension by referring to the below section. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
+4. Restart the machine agent.
+5. The extension needs to be able to connect to CouchDB in order to collect and send metrics. To do this, you will have to either establish a remote connection in between the extension and the product, or have an agent on the same machine running the product in order for the extension to collect and send the metrics.
 
-1. Run "mvn clean install" and find the CouchDBMonitor.zip file in the "target" folder. You can also download the CouchDBMonitor.zip from [AppDynamics Exchange](http://community.appdynamics.com/t5/eXchange-Community-AppDynamics/CouchDB-Monitoring-Extension/idi-p/5537).
-2. Unzip as "CouchDBMonitor" and copy the "CouchDBMonitor" directory to `<MACHINE_AGENT_HOME>/monitors`
+## Configuration 
+In order to use this extension, the following files need to be configured - config.yml and metrics.xml. Here's how to configure those files. 
 
-## Configuration ##
-
-Note : Please make sure to not use tab (\t) while editing yaml files. You may want to validate the yaml file using a [yaml validator](http://yamllint.com/)
-
-1. Configure the couchdb instances by editing the config.yml file in `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/`.
-
-   For eg.
-   ```
-        # List of couchdb instances
-        servers:
-          - host: "localhost"
-            port: 5984
-            username: ""
-            password: ""
-            displayName: "localhost"
-
-         - host: "host"
-            port: 5985
-            username: ""
-            password: ""
-            displayName: "host"
-
-        #prefix used to show up metrics in AppDynamics
-        metricPrefix:  "Custom Metrics|CouchDB|"
-
-   ```
-   
-2. Configure the path to the config.yml file by editing the <task-arguments> in the monitor.xml file in the `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/` directory. Below is the sample
-
-     ```
-     <task-arguments>
-         <!-- config file-->
-         <argument name="config-file" is-required="true" default-value="monitors/CouchDBMonitor/config.yml" />
-          ....
-     </task-arguments>
-    ```
-
-Note : By default, a Machine agent or a AppServer agent can send a fixed number of metrics to the controller. To change this limit, please follow the instructions mentioned [here](http://docs.appdynamics.com/display/PRO14S/Metrics+Limits).
-For eg.  
-```    
-    java -Dappdynamics.agent.maxMetrics=2500 -jar machineagent.jar
+### Config.yml
+* Configure the CouchDB monitoring extension by editing the config.yml file in `<MACHINE_AGENT_HOME>/monitors/CouchDBMonitor/`
+* Enter one node from each of the clusters you are monitoring in the `servers` section of the config.yml. The extension will automatically collect metrics from all nodes in the cluster.
+* Configure the CouchDB instances by specifying the URI(required), username(required), password(required) of the CouchDB account, 
+encryptedPassword(only if password encryption required), proxy(optional), useSSL(set to true if SSL is required). If SSL is required, please configure the `connection` section.
 ```
+servers:
+  - uri: "http://couchdb.one:5984"
+    username: "admin" # user should have privileges in CouchDB
+    password: "admin"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "cluster1"
+```
+* If you wish to monitor multiple clusters from one extension, please pick one node from each cluster and add them in the servers section.
+For example, If you want to monitor two clusters - `cluster1` and `cluster2`, add details of any one node from <b>each</b> cluster. 
+```
+servers:
+  - uri: "http://couchdb.one:5984"
+    username: "admin" # user should have privileges in CouchDB
+    password: "admin"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "cluster1"   # any one node from cluster1
 
-## Directory Structure
+  - uri: "http://couchdb.two:5984"
+    username: "admin" # user should have privileges in CouchDB
+    password: "admin"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "cluster1"   # any one node from cluster2
 
-| Directory/File | Description |
-|----------------|-------------|
-|src/main/resources/conf            | Contains the monitor.xml file and config.yml|
-|src/main/java             | Contains source code of the CouchDB monitoring extension |
-|target            | Only obtained when using maven. Run 'mvn clean install' to get the distributable .zip file |
-|pom.xml       | Maven build script to package the project (required only if changing Java code) |
+<<To add more clusters, simply add any one node from each cluster here>>
+```
+ 
+* Any changes to the config.yml does <b>not</b> require the machine agent to be restarted. 
+* Please copy all the contents of the config.yml file and go to http://www.yamllint.com/ . On reaching the website, paste the contents and press the “Go” button on the bottom left.
+If you get a valid output, that means your formatting is correct and you may move on to the next step.
+
+### Metrics.xml
+* The metrics.xml is a configurable file with the list of all metrics that the extension will fetch. 
+* The metrics.xml is pre-configured with CouchDB metrics from [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats). 
+* The metrics.xml can be configured to report only those metrics that are required. Please remove or comment out metrics that you don't require. 
+* For configuring the metrics, the following properties can be used:
+
+         | Metric Property   |   Default value |         Possible values         |                                              Description                                                       |
+         | :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+         | alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
+         | aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)    |
+         | timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)   |
+         | clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)|
+         | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
+         | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
+         | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.   |
 
 ## Metrics
+* The extension reports primary CouchDB operation metrics from each of your servers.  The metrics reported by the extension are from the `couchdb` group of the [/_stats endpoint for each node](https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats).
 
-### Metric Category: couchdb
+The following metrics are reported under `couchdb` section:
+```
+Number of Cache Hits
+Number of Cache Misses
+Number of Open DBs
+Number of Open OS files
+Number of DB Writes
+Number of DB Reads
+Number of DB Purges
+```
 
-|Metric Name           | Description     |
-|----------------------|-----------------|
-|database_writes       | Number of times a database was changed |
-|database_reads        | Number of times a document was read from a database |
-|open_databases        | Number of open databases |
-|open_os_files         | Number of file descriptors CouchDB has open |
-|request_time          | Length of a request (ms) inside CouchDB |
+The following metrics are reported under `httpd` section:
+```
+Number Aborted Requests
+Number of Bulk Docs
+Number of Bulk Requests
+Number of http Requests
+Temporary View Reads
+Number of View Reads
+Number of Clients Requesting Changes
+Number of Purge Requests
+```
+The following metrics are reported under `dbinfo` section:
 
-### Metric Category: httpd
+```
+Avg Latency - DB Info call
+Avg Latency - collect_db calls(microseconds)
+Avg DB open time(milliseconds)
+Number of document inserts
+Number of document writes
+Total number of document purges
+Number of successful document purges
+Number of failed document purges
 
-|Metric Name           | Description     |
-|----------------------|-----------------|
-|bulk_requests         | Number of bulk requests |
-|requests              | Number of HTTP requests |
-|temporary_view_reads  | Number of temporary view reads |
-|view_reads            | Number of view reads |
+```
+The following metrics are reported under `httpd_request_method` section:
+```
+Number OF HTTP Copy Requests
+Number OF HTTP DELETE Requests
+Number OF HTTP GET Requests
+Number OF HTTP OPTIONS Requests
+Number OF HTTP HEAD Requests
+Number OF HTTP POST Requests
+Number OF HTTP PUT Requests
+```
 
-### Metric Category: httpd_request_methods
+The following metrics are reported under `httpd_status_codes` section:
+```
+2XX Requests
+3XX Requests
+4XX Requests  
+5XX Requests
+```
 
-|Metric Name           | Description     |
-|----------------------|-----------------|
-|COPY       		   | Number of HTTP COPY requests |
-|DELETE                | Number of HTTP DELETE requests |
-|GET                   | Number of HTTP GET requests |
-|HEAD                  | Number of HTTP HEAD requests |
-|MOVE                  | Number of HTTP MOVE requests |
-|POST                  | Number of HTTP POST requests |
-|PUT                   | Number of HTTP PUT requests |
+The following metrics are reported under `request_time` section:
 
-### Metric Category: httpd_status_codes
-
-|Metric Name           | Description     |
-|----------------------|-----------------|
-|201       			   | Number of HTTP 200 OK responses |
-|201        		   | Number of HTTP 201 Created responses |
-|202        		   | Number of HTTP 202 Accepted responses |
-|301         		   | Number of HTTP 301 Moved Permanently responses |
-|304          		   | Number of HTTP 304 Not Modified responses |
-|400         		   | Number of HTTP 400 Bad Request responses |
-|401                   | Number of HTTP 401 Unauthorized responses|
-|403  				   | Number of HTTP 403 Forbidden responses |
-|404            	   | Number of HTTP 404 Not Found responses |
-|405       		   	   | Number of HTTP 405 Method Not Allowed responses |
-|409                   | Number of HTTP 409 Conflict responses |
-|412                   | Number of HTTP 412 Precondition Failed responses |
-|500                   | Number of  HTTP 500 Internal Server Error responses |
+```
+Avg Request Time
+```
+The following metric is reported under `couch_server` section:
+```
+LRU Skip
+```
+The following metric is listed under `query_server` section:
+```
+validate document update Rejects
+validate doc update Duration
+View Server Document Count
+Emit Count
+```
 
 
-## Custom Dashboard
 
-![](https://raw.github.com/Appdynamics/couchdb-monitoring-extension/master/CouchDB%20Dashboard.png)
+## Filtering the metrics
+* The extension supports the filtering of CouchDB metrics based on patterns of the `name` of each CouchDB node. The `node` name is set in CouchDB when CouchDB is initially installed on each machine. 
+* The `nodes` section of the `CouchDbMonitor/config.yml` will help you filter out metrics from specific nodes in your cluster(s).
+* It supports wild card matching. Examples:
+  ```
+  ### This matches all nodes
+   - nodes: [".*"] 
+  
+  ### This matches all node names that start with dev
+   - nodes: ["dev.*"] 
+  
+  ### This matches nothing, no metrics will be fetched
+   - nodes: [] 
+  
+  ### This matches nothing, no metrics will be fetched
+   - nodes: [""] # matches nothing, no metrics will be fetched
+  ```
+* If you want to find out the node name for your CouchDB servers, it can be found from the [/_membership endpoint](https://docs.couchdb.org/en/latest/cluster/nodes.html).
 
-##Contributing
+## Credentials Encryption
+Please visit [this](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) page to get detailed instructions on password encryption. The steps in this document will guide you through the whole process.
 
-Always feel free to fork and contribute any changes directly here on GitHub.
+## Extensions Workbench
+Workbench is an in-built feature provided with each extension in order to assist you to fine tune the extension setup before you actually deploy it on the controller. Please review this [document](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-the-Extensions-WorkBench/ta-p/30130) for how to use the Extensions WorkBench.
 
-##Community
+## Troubleshooting
+##### Connectivity to Couch DB
+* In order for the extension to collect metrics successfully, the machine agent should be able to reach the CouchDB clusters. 
+* To check that, pick one node from each address and get its IP address. 
+* Execute this command from your machine agent host. Please replace the IP address with what you have from the previous step.
+```
+   curl -v -X GET "http://ip.of.any.node.in.cluster:5984/_membership" --user yourusername:yourpassword
+```
+If your cluster is set-up over SSL, please use the --cacert option to specify your keys. If the curl command gives a 200 OK response, your cluster is reachable from Machine Agent. If not, please ensure connectivity from your machine agent host every CouchDB cluster.
 
-Find out more in the [AppSphere](http://appsphere.appdynamics.com/t5/eXchange/CouchDB-Monitoring-Extension/idi-p/5537) community.
+##### Displaying metrics on the AppDynamics Metric Browser
+* Please follow the steps listed in the [extensions troubleshooting document](https://community.appdynamics.com/t5/Knowledge-Base/How-to-troubleshoot-missing-custom-metrics-or-extensions-metrics/ta-p/28695) in order to troubleshoot your issue. These are a set of common issues that customers might have faced during the installation of the extension. If these don't solve your issue, please follow the last step on the troubleshooting-document to contact the support team.
 
-##Support
+## Support Tickets
+If after going through the Troubleshooting Document you have not been able to get your extension working, please file a ticket and add the following information.Please provide the following in order for us to assist you better.  
+1. Stop the running machine agent .
+2. Delete all existing logs under <MachineAgent>/logs .
+3. Please enable debug logging by editing the file <MachineAgent>/conf/logging/log4j.xml. Change the level value of the following <logger> elements to debug. 
+   ```
+   <logger name="com.singularity">
+   <logger name="com.appdynamics">
+    ```
+4. Start the machine agent and please let it run for 10 mins. Then zip and upload all the logs in the directory <MachineAgent>/logs/*.
+5. Attach the zipped <MachineAgent>/conf/* directory here.
+6. Attach the zipped <MachineAgent>/monitors/<ExtensionMonitor> directory here .
+For any support related questions, you can also contact help@appdynamics.com.
 
-For any questions or feature request, please contact [AppDynamics Support](mailto:help@appdynamics.com).
+## Contributing
+Always feel free to fork and contribute any changes directly via [GitHub](https://github.com/Appdynamics/couchdb-monitoring-extension).
 
+## Version
+| Name                        |  Version                    | 
+| :---------------------------| :---------------------------|
+| Extension Version:          | 2.0.0                  |
+| Controller Compatibility:   | 2.2 or Later                |
+| Tested On:                  | Apache CouchDB 2.2         |
+| Operating System Tested On: | Mac OS, Linux               |
+| Last updated On:            | Oct 18, 2019          |
+| List of changes to this extension| [Change log](https://github.com/Appdynamics/couchdb-monitoring-extension/blob/master/CHANGELOG.md)

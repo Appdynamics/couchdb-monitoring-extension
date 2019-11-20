@@ -1,0 +1,53 @@
+metricPrefix: "Custom Metrics|Couch DB|"
+
+servers:
+  - uri: "${COUCHDB_ONE}"
+    username: "${COUCHDB_USER}" # user should have privilege in CouchDB to view stats and view info
+    password: "${COUCHDB_PWD}"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "cluster1"
+
+  - uri: "${COUCHDB_THREE}"
+    username: "${COUCHDB_USER}"
+    password: "${COUCHDB_PWD}"
+    encryptedPassword: ""
+    useSSL: "false"
+    displayName: "cluster3"
+
+nodes: [".*"]
+
+# numberOfThreads =  1 for each node in each cluster
+numberOfThreads: 20
+
+metricPathReplacements:
+  - replace: "percent"
+    replaceWith: "%"
+
+customDashboard:
+  enabled: true
+  dashboardName: "CouchDB Monitor Dashboard"
+  sslCertCheckEnabled: true
+  # Update the path to the dashboard file.
+  pathToSIMDashboard: "monitors/CouchDBMonitor/CouchDB+Dashboard.json"
+  pathToNormalDashboard:
+  periodicDashboardCheckInSeconds: 60
+
+controllerInfo:
+  controllerHost: "controller"
+  controllerPort: 8080
+  controllerSslEnabled: false
+  enableOrchestration: false
+  uniqueHostId: ""
+  username: "user1"
+  password: "welcome"
+  encryptedPassword: ""
+  accountAccessKey: "${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}"
+  account: "customer1"
+  machinePath: ""
+  simEnabled: true
+  applicationName: ""
+  tierName: ""
+  nodeName: ""
+
+enableHealthChecks: true
