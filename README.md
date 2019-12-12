@@ -212,4 +212,4 @@ Always feel free to fork and contribute any changes directly via [GitHub](https:
 | Tested On:                  | Apache CouchDB 2.2         |
 | Operating System Tested On: | Mac OS, Linux               |
 | Last updated On:            | Oct 18, 2019          |
-| List of changes to this extension| [Change log](https://github.com/Appdynamics/couchdb-monitoring-extension/blob/master/CHANGELOG.md)
+| List of changes to this extension| [Change log](https://github.com/Appdynamics/couchdb-monitoring-extension/blob/master/CHANGES.md)
