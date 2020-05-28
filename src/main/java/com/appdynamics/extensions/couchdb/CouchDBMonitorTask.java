@@ -9,8 +9,8 @@ import com.appdynamics.extensions.http.HttpClientUtils;
 import com.appdynamics.extensions.http.UrlBuilder;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
 import com.appdynamics.extensions.metrics.Metric;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -59,10 +59,10 @@ class CouchDBMonitorTask implements AMonitorTaskRunnable {
             JsonNode clusterNodes = getClusterNodes();
             for (String nodePattern : nodePatterns) {
                 for (JsonNode clusterNode : clusterNodes) {
-                    if (clusterNode.getTextValue().matches(nodePattern)) {
-                        LOGGER.debug("Wildcard match for node name - {}", clusterNode.getTextValue());
-                        LOGGER.debug("Processing node {}", clusterNode.getTextValue());
-                        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, server.get(Constants.URI).toString(), server.get(Constants.DISPLAY_NAME).toString(), clusterNode.getTextValue(), phaser);
+                    if (clusterNode.textValue().matches(nodePattern)) {
+                        LOGGER.debug("Wildcard match for node name - {}", clusterNode.textValue());
+                        LOGGER.debug("Processing node {}", clusterNode.textValue());
+                        NodeMetricsCollectorTask nodeMetricsCollectorTask = new NodeMetricsCollectorTask(configuration, server.get(Constants.URI).toString(), server.get(Constants.DISPLAY_NAME).toString(), clusterNode.textValue(), phaser);
                         Future<List<Metric>> metricsList = configuration.getContext().getExecutorService().submit("Node Task", nodeMetricsCollectorTask);
                         metricWriteHelper.transformAndPrintMetrics(metricsList.get());
                     }
