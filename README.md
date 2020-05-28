@@ -207,9 +207,9 @@ Always feel free to fork and contribute any changes directly via [GitHub](https:
 ## Version
 | Name                        |  Version                    | 
 | :---------------------------| :---------------------------|
-| Extension Version:          | 2.0.0                  |
+| Extension Version:          | 2.0.1                 |
 | Controller Compatibility:   | 2.2 or Later                |
 | Tested On:                  | Apache CouchDB 2.2         |
 | Operating System Tested On: | Mac OS, Linux               |
-| Last updated On:            | Oct 18, 2019          |
+| Last updated On:            | May 28, 2020         |
 | List of changes to this extension| [Change log](https://github.com/Appdynamics/couchdb-monitoring-extension/blob/master/CHANGES.md)

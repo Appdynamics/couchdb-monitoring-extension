@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.util.Map;
 
-import static com.appdynamics.extensions.Constants.ENCRYPTION_KEY;
-
 /**
  * @author: {Vishaka Sekar} on {2/11/19}
  */
